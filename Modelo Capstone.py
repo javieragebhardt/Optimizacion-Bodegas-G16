@@ -42,7 +42,19 @@ m.addConstrs((quicksum(y[i, j] * (d[i, j - 1] / v) for j in J) <= t for i in I),
 
 m.optimize()
 
-def obtener_resultados(m, x, y, I, J):
+for j in J:
+    if x[j].x > 0:
+        print(f"La bodega {j} es abierta")
+    else:
+        print(f"La bodega {j} NO es abierta")
+
+for i in I:
+    for j in J:
+        if y[i, j].x > 0:
+            print(f"Fracción de la demanda del cliente {i} que es asignada a la bodega {j} = {y[i, j].x}")
+
+
+def obtener_resultados(modelo, x, y, I, J):
     resultados = {}
     asignaciones = {}
 
