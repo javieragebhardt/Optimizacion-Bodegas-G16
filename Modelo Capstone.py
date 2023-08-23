@@ -42,7 +42,7 @@ m.addConstrs((quicksum(y[i, j] * (d[i, j - 1] / v) for j in J) <= t for i in I),
 
 m.optimize()
 
-def obtener_resultados(model, x, y, I, J):
+def obtener_resultados(m, x, y, I, J):
     resultados = {}
     asignaciones = {}
 
