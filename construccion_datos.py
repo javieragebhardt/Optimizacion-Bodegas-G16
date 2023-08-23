@@ -29,17 +29,19 @@ radio_tierra = 6371000  # metros
 # Crear una matriz de distancias con ceros
 num_bodegas = len(dict_bodegas)
 num_ventas = len(dict_ventas)
-d = np.zeros((num_ventas, num_bodegas)) # Matriz Manhattan
+d = dict() # Matriz Manhattan
+# print(dict_ventas1.keys())
 
 # Llenar la matriz de distancias
-for i, (venta, venta_coords) in enumerate(dict_ventas.items()): #Revisamos todas las tuplas (key, valores) del diccionario de comunas
-    for j, (bodega, bodega_coords) in enumerate(dict_bodegas.items()): #Revisamos todas las tuplas (key, valores) del diccionario de bodegas
+for i, (venta, venta_valores) in enumerate(dict_ventas.items()): #Revisamos todas las tuplas (key, valores) del diccionario de comunas
+    d[venta_valores['ID Cliente']] = dict()
+    for j, (bodega, bodega_valores) in enumerate(dict_bodegas.items()): #Revisamos todas las tuplas (key, valores) del diccionario de bodegas
         # Sacamos la diferencia y hacemos la conversión a metros
-        lat_diff = abs(bodega_coords['LAT'] - venta_coords['LAT']) * (np.pi / 180) * radio_tierra
-        lon_diff = abs(bodega_coords['LONG'] - venta_coords['LON']) * (np.pi / 180) * radio_tierra * np.cos((bodega_coords['LAT'] + venta_coords['LAT']) * 0.5 * (np.pi / 180)) 
+        lat_diff = abs(bodega_valores['LAT'] - venta_valores['LAT']) * (np.pi / 180) * radio_tierra
+        lon_diff = abs(bodega_valores['LONG'] - venta_valores['LON']) * (np.pi / 180) * radio_tierra * np.cos((bodega_valores['LAT'] + venta_valores['LAT']) * 0.5 * (np.pi / 180)) 
         
-        d[i, j] = round((lat_diff + lon_diff)/1000, 2)  # Distancia Manhattan en kilometros, redondeado al segundo decimal
-
+        # d[i, j] = round((lat_diff + lon_diff)/1000, 2)  # Distancia Manhattan en kilometros, redondeado al segundo decimal
+        d[venta_valores['ID Cliente']][bodega_valores['ID Bodega']] = round((lat_diff + lon_diff)/1000, 2)  # Distancia Manhattan en kilometros, redondeado al segundo decimal
 
 ######## definición de h
 
@@ -56,4 +58,3 @@ I = list(dict_ventas1['ID Cliente'].values())
 
 ######## definición de J
 J = list(dict_bodegas1['ID Bodega'].values())
-print(J)

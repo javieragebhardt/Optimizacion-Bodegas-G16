@@ -31,14 +31,14 @@ m.update()
 
 # Función Objetivo
 
-m.setObjective(quicksum(h[i] * d[i, j - 1] * y[i, j] for i in I for j in J)) 
+m.setObjective(quicksum(h[i] * d[i][j] * y[i, j] for i in I for j in J)) 
 
 # Restricciones
 
 m.addConstrs((y.sum(i, '*') == 1 for i in I), name = "asignación_demanda")
 m.addConstrs((y[i, j] <= x[j] for i in I for j in J), name = "límite_asignación")
 m.addConstr(x.sum() == p, name = "número_bodegas")
-m.addConstrs((quicksum(y[i, j] * (d[i, j - 1] / v) for j in J) <= t for i in I), name = "tiempo_máximo")
+m.addConstrs((quicksum(y[i, j] * (d[i][j] / v) for j in J) <= t for i in I), name = "tiempo_máximo")
 
 m.optimize()
 
@@ -51,7 +51,8 @@ for j in J:
 for i in I:
     for j in J:
         if y[i, j].x > 0:
-            print(f"Fracción de la demanda del cliente {i} que es asignada a la bodega {j} = {y[i, j].x}")
+            pass
+            # print(f"Fracción de la demanda del cliente {i} que es asignada a la bodega {j} = {y[i, j].x}")
 
 
 def obtener_resultados(modelo, x, y, I, J):
@@ -71,4 +72,4 @@ def obtener_resultados(modelo, x, y, I, J):
 
     return resultados, asignaciones
 
-resultados, asignaciones = obtener_resultados(m, x, y, I, J)
+# resultados, asignaciones = obtener_resultados(m, x, y, I, J)
