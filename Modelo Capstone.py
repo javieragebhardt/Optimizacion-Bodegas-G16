@@ -18,7 +18,7 @@ J = construccion_datos.J
 
 h = construccion_datos.h  # Demanda clientes -> diccionario h[id_cliente]
 d = construccion_datos.d
-p = 10 # Número de bodegas a ubicar
+p = 3 # Número de bodegas a ubicar
 t = 48 # Tiempo máximo de despacho a clientes TODO nos lo tienen que dar
 v = 60 # Velocidad promedio del vehículo de despacho TODO cambiar
 
