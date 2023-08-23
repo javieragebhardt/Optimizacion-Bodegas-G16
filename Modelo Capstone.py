@@ -9,25 +9,54 @@ import construccion_datos
 
 m = Model()
 
+# Conjuntos
 
-#Conjuntos
+I = construccion_datos.I
+J = construccion_datos.J
 
+# Parámetros
 
-
-#Parámetros
-
-h =
-p = 10 # Número de bodegas a ubicar
-v = 60 # Velocidad promedio del vehículo de desoacho TODO cambiar
+h = construccion_datos.h  # Demanda clientes -> diccionario h[id_cliente]
 d = construccion_datos.d
+p = 10 # Número de bodegas a ubicar
+t = 48 # Tiempo máximo de despacho a clientes TODO nos lo tienen que dar
+v = 60 # Velocidad promedio del vehículo de despacho TODO cambiar
 
-#Variables
+# Variables
 
-x = m.addVars()
-y = m.addVars()
+x = m.addVars(J, vtype = GRB.BINARY, name = "x")
+y = m.addVars(I, J, vtype = GRB.CONTINUOUS, name = "y")
 
 m.update()
 
-#Función Objetivo
+# Función Objetivo
 
-#Restricciones
+m.setObjective(quicksum(h[i] * d[i, j - 1] * y[i, j] for i in I for j in J)) 
+
+# Restricciones
+
+m.addConstrs((y.sum(i, '*') == 1 for i in I), name = "asignación_demanda")
+m.addConstrs((y[i, j] <= x[j] for i in I for j in J), name = "límite_asignación")
+m.addConstr(x.sum() == p, name = "número_bodegas")
+m.addConstrs((quicksum(y[i, j] * (d[i, j - 1] / v) for j in J) <= t for i in I), name = "tiempo_máximo")
+
+m.optimize()
+
+def obtener_resultados(model, x, y, I, J):
+    resultados = {}
+    asignaciones = {}
+
+    for j in J:
+        if x[j].x > 0.5:
+            resultados[j] = []
+
+    for i in I:
+        for j in J:
+            if y[i, j].x > 0:
+                if j in resultados:
+                    resultados[j].append(i)
+                asignaciones[(i, j)] = y[i, j].x
+
+    return resultados, asignaciones
+
+resultados, asignaciones = obtener_resultados(m, x, y, I, J)
