@@ -43,6 +43,7 @@ for i in dict_ventas.keys():
         
         d[i][j] = round((lat_diff + lon_diff)/1000, 2)  # Distancia Manhattan en kilometros, redondeado al segundo decimal
 
+
 ######## definición de h
 
 h = bdd_ventas_agrupadas.set_index('ID Cliente')['Cantidad'].to_dict()
