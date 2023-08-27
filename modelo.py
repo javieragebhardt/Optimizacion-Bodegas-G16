@@ -31,7 +31,7 @@ class LocalizacionOptima:
         self.m.addConstrs((self.y.sum(i, '*') == 1 for i in self.I), name = "asignación_demanda")
         self.m.addConstrs((self.y[i, j] <= self.x[j] for i in self.I for j in self.J), name = "límite_asignación")
         self.m.addConstr(self.x.sum() == p, name = "número_bodegas")
-        self.m.addConstrs((quicksum(self.y[i, j] * (self.d[i][j] / v) for j in self.J) <= t for i in self.I), name = "tiempo_máximo")
+        self.m.addConstrs((quicksum(self.y[i, j] * (self.d[i][j] / v) for j in self.J) <= self.t[i] for i in self.I), name = "tiempo_máximo")
 
     def optimizar(self):
         self.m.optimize()
@@ -50,5 +50,5 @@ class LocalizacionOptima:
         self.optimizar()
         return self.generar_diccionario_resultados(), self.m.objVal
 
-prueba = LocalizacionOptima(10, 60, 48).resolver()[0]
+prueba = LocalizacionOptima(5, 60, construccion_datos.t1).resolver()[0]
 print(prueba)
