@@ -43,6 +43,7 @@ for i, (venta, venta_valores) in enumerate(dict_ventas.items()): #Revisamos toda
         # d[i, j] = round((lat_diff + lon_diff)/1000, 2)  # Distancia Manhattan en kilometros, redondeado al segundo decimal
         d[venta_valores['ID Cliente']][bodega_valores['ID Bodega']] = round((lat_diff + lon_diff)/1000, 2)  # Distancia Manhattan en kilometros, redondeado al segundo decimal
 
+
 ######## definición de h
 
 
