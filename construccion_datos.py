@@ -12,7 +12,6 @@ bdd_ventas['Fecha'] = pd.to_datetime(bdd_ventas['Fecha'])
 bdd_proyeccion['Fecha'] =pd.to_datetime(bdd_proyeccion['Fecha'])
 
 bdd_ventas_agrupadas = bdd_ventas.groupby("ID Cliente").agg({"Cantidad": "sum", "Comuna Despacho": "first"}).reset_index()
-
 bdd_ventas_agrupadas = bdd_ventas_agrupadas.merge(bdd_comunas, left_on='Comuna Despacho', right_on='Comuna')
 
 # Armamos los diccionarios
