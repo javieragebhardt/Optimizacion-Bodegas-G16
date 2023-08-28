@@ -15,7 +15,7 @@ bdd_proyeccion['Fecha'] =pd.to_datetime(bdd_proyeccion['Fecha'])
 # Agrupación de ventas por cliente y completar comuna
 bdd_ventas_agrupadas = bdd_ventas.groupby("ID Cliente").agg({"Cantidad": "sum", "Comuna Despacho": "first"}).reset_index()
 bdd_ventas_agrupadas = bdd_ventas_agrupadas.merge(bdd_comunas, left_on='Comuna Despacho', right_on='Comuna')
-bdd_ventas_agrupadas = bdd_ventas_agrupadas[bdd_ventas_agrupadas["Cantidad"] >= 0]
+bdd_ventas_agrupadas = bdd_ventas_agrupadas[bdd_ventas_agrupadas["Cantidad"] != 0]
 
 # Armamos los diccionarios
 dict_bodegas = bdd_bodegas.set_index('ID Bodega')[['LAT', 'LONG']].to_dict(orient='index') 
@@ -57,13 +57,18 @@ def generar_t(bdd, inferior, superior):
     clientes_inferior = bdd['Cantidad'][bdd['Cantidad'] <= inferior]
     clientes_medio =  bdd['Cantidad'][( bdd['Cantidad'] >  inferior ) & ( bdd['Cantidad'] <=  superior)]
     clientes_sobre =  bdd['Cantidad'][superior < bdd['Cantidad']]
-    bdd_copy.loc[bdd_copy['ID Cliente'].isin(clientes_medio.index), 'Horas'] = 24
-    bdd_copy.loc[bdd_copy['ID Cliente'].isin(clientes_sobre.index), 'Horas'] = 12 
+    # Actualizamos las horas para los diferentes grupos de clientes
+    bdd_copy.loc[clientes_medio.index, 'Horas'] = 24
+    bdd_copy.loc[clientes_sobre.index, 'Horas'] = 12 
+    # Contamos la cantidad de horas por categoría
     cantidad_por_categoria = bdd_copy['Horas'].value_counts()
+    # Creamos un diccionario con ID Cliente como clave y Horas como valor
     t = bdd_copy.set_index('ID Cliente')['Horas'].to_dict()
+
     return t
 
-t1 = generar_t(bdd_ventas_agrupadas, 906, 11033)
+t1 = generar_t(bdd_ventas_agrupadas, bdd_ventas_agrupadas['Cantidad'].max() * 0.25 , bdd_ventas_agrupadas['Cantidad'].max() * 0.75)
+t2 = generar_t(bdd_ventas_agrupadas, 906, 11033)
 
 ######## definición de I
 I = list(dict_ventas.keys())
