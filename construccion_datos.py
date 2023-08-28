@@ -14,7 +14,7 @@ bdd_proyeccion['Fecha'] =pd.to_datetime(bdd_proyeccion['Fecha'])
 # Agrupación de ventas por cliente y completar comuna
 bdd_ventas_agrupadas = bdd_ventas.groupby("ID Cliente").agg({"Cantidad": "sum", "Comuna Despacho": "first", 'ID Bodega Despacho': 'first'}).reset_index()
 bdd_ventas_agrupadas = bdd_ventas_agrupadas.merge(bdd_comunas, left_on='Comuna Despacho', right_on='Comuna')
-bdd_ventas_agrupadas = bdd_ventas_agrupadas[bdd_ventas_agrupadas["Cantidad"] != 0]
+bdd_ventas_agrupadas = bdd_ventas_agrupadas[bdd_ventas_agrupadas["Cantidad"] != 0] #TODO revisar
 
 # Armamos los diccionarios
 dict_bodegas = bdd_bodegas.set_index('ID Bodega')[['LAT', 'LONG']].to_dict(orient='index') 
@@ -38,8 +38,10 @@ for i in dict_ventas.keys():
         # Sacamos la diferencia y hacemos la conversión a metros
         lat_diff = abs(dict_bodegas[j]['LAT'] - dict_ventas[i]['LAT']) * (np.pi / 180) * radio_tierra
         lon_diff = abs(dict_bodegas[j]['LONG'] - dict_ventas[i]['LON']) * (np.pi / 180) * radio_tierra * np.cos((dict_bodegas[j]['LAT'] + dict_ventas[i]['LAT']) * 0.5 * (np.pi / 180)) 
-        
-        d[i][j] = round((lat_diff + lon_diff)/1000, 2)  # Distancia Manhattan en kilometros, redondeado al segundo decimal
+        if round((lat_diff + lon_diff)/1000, 2) > 0:
+            d[i][j] = round((lat_diff + lon_diff)/1000, 2)  # Distancia Manhattan en kilometros, redondeado al segundo decimal
+        elif round((lat_diff + lon_diff)/1000, 2) == 0:
+            d[i][j] = 0.01
 
 
 ######## definición de h
@@ -65,8 +67,6 @@ def generar_t(bdd, inferior, superior):
 
     return t
 
-t1 = generar_t(bdd_ventas_agrupadas, bdd_ventas_agrupadas['Cantidad'].max() * 0.25 , bdd_ventas_agrupadas['Cantidad'].max() * 0.75)
-t2 = generar_t(bdd_ventas_agrupadas, 906, 11033)
 
 ######## definición de I
 I = list(dict_ventas.keys())
