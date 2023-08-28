@@ -1,5 +1,4 @@
 import pandas as pd
-from gurobipy import Model, GRB, quicksum
 import numpy as np
 
 # Importación base de datos
@@ -13,14 +12,13 @@ bdd_ventas['Fecha'] = pd.to_datetime(bdd_ventas['Fecha'])
 bdd_proyeccion['Fecha'] =pd.to_datetime(bdd_proyeccion['Fecha'])
 
 # Agrupación de ventas por cliente y completar comuna
-bdd_ventas_agrupadas = bdd_ventas.groupby("ID Cliente").agg({"Cantidad": "sum", "Comuna Despacho": "first"}).reset_index()
+bdd_ventas_agrupadas = bdd_ventas.groupby("ID Cliente").agg({"Cantidad": "sum", "Comuna Despacho": "first", 'ID Bodega Despacho': 'first'}).reset_index()
 bdd_ventas_agrupadas = bdd_ventas_agrupadas.merge(bdd_comunas, left_on='Comuna Despacho', right_on='Comuna')
 bdd_ventas_agrupadas = bdd_ventas_agrupadas[bdd_ventas_agrupadas["Cantidad"] != 0]
 
 # Armamos los diccionarios
 dict_bodegas = bdd_bodegas.set_index('ID Bodega')[['LAT', 'LONG']].to_dict(orient='index') 
-dict_comunas = bdd_comunas.set_index('Comuna')[['Region', 'LAT', 'LON']].to_dict(orient='index') 
-dict_ventas = bdd_ventas_agrupadas.set_index('ID Cliente')[['Cantidad', 'Comuna Despacho', 'LAT', 'LON']].to_dict(orient='index') 
+dict_ventas = bdd_ventas_agrupadas.set_index('ID Cliente')[['Cantidad', 'Comuna Despacho', 'LAT', 'LON', 'ID Bodega Despacho']].to_dict(orient='index') 
 
 # Radio aproximado de la Tierra en metros
 radio_tierra = 6371000  # metros
