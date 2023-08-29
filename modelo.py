@@ -121,8 +121,7 @@ class LocalizacionOptima:
         self.generar_data_frame(resultados, f'tiempos_p_{self.p}_v_{self.v}.xlsx')  
         return resultados
 
-caso = LocalizacionOptima(10, 45, 0, f'resultados_p_{10}_v_45.xlsx').resolver()
+caso = LocalizacionOptima(1, 10, 0, f'resultados_p_{10}_v_45.xlsx').resolver()
 
 dict_tiempos = caso[1]
 dict_v_obj = caso[2]
-
