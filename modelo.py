@@ -103,25 +103,26 @@ class LocalizacionOptima:
     def generar_data_frame(self, dict, filename):
         df = pd.DataFrame(dict)
         df = df.T
-        print(df)
         df.to_excel(filename, index=True)
 
     def resolver(self):
         self.optimizar()
         self.generar_data_frame(self.generar_diccionario_resultados(), self.filename)
+        self.generar_mapa()
         return self.generar_diccionario_resultados(), self.calcular_tiempos(), self.m.objVal
     
     def calcular_tiempos(self):
         resultados = dict()
         for i in self.I:
+            resultados[i] = dict()
             for j in self.J:
                 if self.y[i, j].x > 0 and self.x[j].x > 0:
-                    resultados[i] = self.d[i][j] / self.v  
+                    resultados[i]['Tiempo'] = self.d[i][j] / self.v  
         self.generar_data_frame(resultados, f'tiempos_p_{self.p}_v_{self.v}.xlsx')  
         return resultados
 
 caso = LocalizacionOptima(10, 45, 0, f'resultados_p_{10}_v_45.xlsx').resolver()
-caso.generar_mapa()
+
 dict_tiempos = caso[1]
 dict_v_obj = caso[2]
 
