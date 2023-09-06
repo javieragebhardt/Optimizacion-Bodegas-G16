@@ -6,6 +6,7 @@ bdd_ventas = pd.read_excel("BDD_Bodegas.xlsx")
 bdd_proyeccion = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=1)
 bdd_bodegas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=2)
 bdd_comunas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=3)
+bdd_comuna_bodega = pd.read_excel("distancias_comunas_bodegas.xlsx")
 
 # Pasamos la columna de fechas a formato de fechas
 bdd_ventas['Fecha'] = pd.to_datetime(bdd_ventas['Fecha'])
@@ -19,6 +20,21 @@ bdd_ventas_agrupadas = bdd_ventas_agrupadas[bdd_ventas_agrupadas["Cantidad"] != 
 # Armamos los diccionarios
 dict_bodegas = bdd_bodegas.set_index('ID Bodega')[['LAT', 'LONG']].to_dict(orient='index') 
 dict_ventas = bdd_ventas_agrupadas.set_index('ID Cliente')[['Cantidad', 'Comuna Despacho', 'LAT', 'LON', 'ID Bodega Despacho']].to_dict(orient='index') 
+# Transpone el DataFrame para tener las columnas como índices
+df = bdd_comuna_bodega.T
+
+# Crea un diccionario para almacenar los datos
+dict_comunas_bodegas = {}
+
+# Itera a través de las columnas del DataFrame
+for columna in df.columns:
+    # Obtiene los valores de la columna como una lista
+    valores = df[columna].tolist()    
+    # Agrega el diccionario de la columna al diccionario principal
+    dict_comunas_bodegas[valores[0]] = {i: valores[i] for i in range(1,11)}
+
+# Ahora, data_dict contiene el diccionario que deseas
+print(dict_comunas_bodegas)
 
 # Radio aproximado de la Tierra en metros
 radio_tierra = 6371000  # metros
@@ -28,21 +44,26 @@ num_bodegas = len(dict_bodegas)
 num_ventas = len(dict_ventas)
 
 # Crear diccionario que contiene las distancias Manhattan
-d = dict() # Distancias Manhattan
+d_Manhattan = dict() # Distancias Manhattan
 
 # creamos una iteración sobre los id de ventas
 for i in dict_ventas.keys():
-    d[i] = dict()
+    d_Manhattan[i] = dict()
     # creamos una iteración sobre los id de bodegas
     for j in dict_bodegas.keys():
         # Sacamos la diferencia y hacemos la conversión a metros
         lat_diff = abs(dict_bodegas[j]['LAT'] - dict_ventas[i]['LAT']) * (np.pi / 180) * radio_tierra
         lon_diff = abs(dict_bodegas[j]['LONG'] - dict_ventas[i]['LON']) * (np.pi / 180) * radio_tierra * np.cos((dict_bodegas[j]['LAT'] + dict_ventas[i]['LAT']) * 0.5 * (np.pi / 180)) 
         if round((lat_diff + lon_diff)/1000, 2) > 0:
-            d[i][j] = round((lat_diff + lon_diff)/1000, 2)  # Distancia Manhattan en kilometros, redondeado al segundo decimal
+            d_Manhattan[i][j] = round((lat_diff + lon_diff)/1000, 2)  # Distancia Manhattan en kilometros, redondeado al segundo decimal
         elif round((lat_diff + lon_diff)/1000, 2) == 0:
-            d[i][j] = 0.01
+            d_Manhattan[i][j] = 0.01
 
+#### Creamos otro diccionario
+d_mapbox = dict()
+
+for i in dict_ventas.keys():
+    d_mapbox[i] = dict()
 
 ######## definición de h
 
