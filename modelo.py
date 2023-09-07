@@ -134,12 +134,25 @@ class LocalizacionOptima:
     
     def calcular_tiempos(self):
         resultados = dict()
+        ventas = construccion_datos.dict_ventas
         for i in self.I:
             resultados[i] = dict()
+            categoria = ventas[i]['Categoria'] 
+            if categoria == 'Premium':
+                tiempo_max = 12
+            elif categoria == 'Gold':
+                tiempo_max = 24
+            elif categoria == 'Silver':
+                tiempo_max = 48
             for j in self.J:
                 if self.y[i, j].x > 0 and self.x[j].x > 0:
                     resultados[i]['Tiempo'] = self.d[i][j] / self.v  
                     resultados[i]['Bodega Asignada'] = j
+                    resultados[i]['Tiempo Categoría'] = tiempo_max
+                    resultados[i]['Cumple Mínimo'] = 0
+                    if self.d[i][j] / self.v <= tiempo_max:
+                        resultados[i]['Cumple Mínimo'] = 1
+
         self.generar_data_frame(resultados, f'resultados/tiempos_p_{self.p}_v_{self.v}_{self.tipo_distancia}.xlsx')  
         return resultados
 
@@ -172,3 +185,4 @@ LocalizacionOptima(5, 15, 0, construccion_datos.d_mapbox).resolver()
 LocalizacionOptima(3, 15, 0, construccion_datos.d_mapbox).resolver()
 
 #TODO FALTA CORRER CASOS PARA DISTINTA CATEGORICACIÓN mapbox y v = 30 km/hr p=10, p= 5 y p= 3
+

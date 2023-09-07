@@ -81,6 +81,8 @@ for i in I:
 generar_data_frame(tiempos, f'resultados/tiempos_p_{10}_v_{30}_Manhattan_original.xlsx')
 generar_mapa(dict_ventas, v1)
 
+print(dict_ventas)
+
 # Caso base con v = 45 km/hr y distancia Manhattan
 suma = 0
 tiempos = dict()

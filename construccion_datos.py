@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 
 # Importación base de datos
-bdd_ventas = pd.read_excel("BDD_Bodegas.xlsx")
+bdd_categoria = "BDD_Bodegas_Categorizada.xlsx"
+bdd_ventas = pd.read_excel(bdd_categoria)
 bdd_proyeccion = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=1)
 bdd_bodegas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=2)
 bdd_comunas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=3)
@@ -13,13 +14,14 @@ bdd_ventas['Fecha'] = pd.to_datetime(bdd_ventas['Fecha'])
 bdd_proyeccion['Fecha'] =pd.to_datetime(bdd_proyeccion['Fecha'])
 
 # Agrupación de ventas por cliente y completar comuna
-bdd_ventas_agrupadas = bdd_ventas.groupby("ID Cliente").agg({"Cantidad": "sum", "Comuna Despacho": "first", 'ID Bodega Despacho': 'first'}).reset_index()
+bdd_ventas_agrupadas = bdd_ventas.groupby("ID Cliente").agg({"Cantidad": "sum", "Comuna Despacho": "first", 'ID Bodega Despacho': 'first', 'Categoria': 'first'}).reset_index()
 bdd_ventas_agrupadas = bdd_ventas_agrupadas.merge(bdd_comunas, left_on='Comuna Despacho', right_on='Comuna')
 bdd_ventas_agrupadas = bdd_ventas_agrupadas[bdd_ventas_agrupadas["Cantidad"] != 0] #TODO revisar
 
+
 # Armamos los diccionarios
 dict_bodegas = bdd_bodegas.set_index('ID Bodega')[['LAT', 'LONG']].to_dict(orient='index') 
-dict_ventas = bdd_ventas_agrupadas.set_index('ID Cliente')[['Cantidad', 'Comuna Despacho', 'LAT', 'LON', 'ID Bodega Despacho']].to_dict(orient='index') 
+dict_ventas = bdd_ventas_agrupadas.set_index('ID Cliente')[['Cantidad', 'Comuna Despacho', 'LAT', 'LON', 'ID Bodega Despacho', 'Categoria']].to_dict(orient='index') 
 
 # Transpone el DataFrame para tener las columnas como índices
 df = bdd_comuna_bodega.T
@@ -35,7 +37,6 @@ for columna in df.columns:
     dict_comunas_bodegas[valores[0]] = {i: valores[i] for i in range(1,11)}
 
 # Ahora, data_dict contiene el diccionario que deseas
-print(dict_comunas_bodegas)
 
 # Radio aproximado de la Tierra en metros
 radio_tierra = 6371000  # metros
