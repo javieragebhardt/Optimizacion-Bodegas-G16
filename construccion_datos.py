@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import json
 
 # Importación base de datos
 bdd_categoria = "BDD_Bodegas_Categorizada.xlsx"
@@ -74,6 +75,18 @@ for i in dict_ventas.keys():
     bodegas_comuna = distancias_en_red[distancias_en_red['Unnamed: 0']== comuna]
     data_dict = bodegas_comuna.set_index('Unnamed: 0').squeeze().to_dict()
     d_mapbox[i] = data_dict
+
+#### Creamos el diccionario rutas de mapbox
+# Lee el archivo JSON
+with open('rutas.json', 'r') as archivo_json:
+    data = json.load(archivo_json)
+
+# Convierte los índices de bodegas a enteros
+rutas = {
+    comuna: {int(id_bodega): coordenadas for id_bodega, coordenadas in bodegas.items()}
+    for comuna, bodegas in data.items()
+}
+
 
 
 ######## definición de h

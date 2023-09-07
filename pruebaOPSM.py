@@ -1,6 +1,7 @@
 import mapbox
 import pandas as pd
 from mapbox import Directions
+import json
 
 # Configura el cliente con tu token de acceso
 service = Directions(access_token="pk.eyJ1IjoiamF2aWVyYWdlYmIiLCJhIjoiY2xtN3Y4ZmR5MDNtcDNkbW4zd2Y4M2t1OSJ9.Nvg5ie5hjdGn7Knj6PpcaQ")
@@ -27,48 +28,60 @@ dict_comunas = bdd_comunas.to_dict(orient='records')
 
 # Crear diccionario 
 distances = {}
-
+rutas = {}
 
 for comuna in dict_comunas:
-    for j in dict_bodegas.keys():
-        start_coords = (comuna['LON'], comuna['LAT'])
-        end_coords = (dict_bodegas[j]['LONG'], dict_bodegas[j]['LAT'])
-        
-        # Configura tu feature de GeoJSON
-        feature = {
-            'type': 'Feature',
-            'properties': {'name': 'route'},
-            'geometry': {
-                'type': 'LineString',
-                'coordinates': [start_coords, end_coords]
-            }
-        }
-        # Calcula la ruta
-        response = service.directions([feature], profile='mapbox/driving', geometries='geojson')
-        # Verificar si la respuesta es válida
-        if response.status_code == 200:
-            data = response.geojson()
-            if data['features']:
-                route_data = data['features'][0]
-                distance = route_data['properties']['distance'] / 1000  # Convertir a kilómetros
-                distances[(comuna['Comuna'], j)] = distance
-                with open('distancias.txt', 'a') as file:
-                    file.write(f"{comuna['Comuna'], j, distance}\n")
-            else:
-                with open('distancias.txt', 'a') as file:
-                    file.write(f"No se encontró ruta entre {comuna['Comuna']} y bodega {j}\n")
-        else:
-            with open('distancias.txt', 'a') as file:
-                file.write(f"Error en la solicitud para {comuna['Comuna']} y bodega {j}. Código de estado: {response.status_code}\n")
-                                                                                    
-df = pd.DataFrame()
+    if comuna['Comuna'] == 'CALDERA':
+        rutas[comuna['Comuna']] = dict()
+        for j in dict_bodegas.keys():
+            if j == 1:
+                id_bodega = dict_bodegas[j]
+                print(comuna['Comuna'], f'bodega {j}')
+                start_coords = (comuna['LON'], comuna['LAT'])
+                end_coords = (dict_bodegas[j]['LONG'], dict_bodegas[j]['LAT'])
+                
+                # Configura tu feature de GeoJSON
+                feature = {
+                    'type': 'Feature',
+                    'properties': {'name': 'route'},
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': [start_coords, end_coords]
+                    }
+                }
+                # Calcula la ruta
+                response = service.directions([feature], profile='mapbox/driving', geometries='geojson')
+                # Verificar si la respuesta es válida
+                if response.status_code == 200:
+                    data = response.geojson()
+                    if data['features']:
+                        route_data = data['features'][0]
+                        distance = route_data['properties']['distance'] / 1000  # Convertir a kilómetros
+                        for coordenada in route_data['geometry']['coordinates']:
+                            print(coordenada)
+                        distances[(comuna['Comuna'], j)] = distance
+                        rutas[comuna['Comuna']][j]= route_data['geometry']['coordinates']
 
+                #         with open('distancias.txt', 'a') as file:
+                #             file.write(f"{comuna['Comuna'], j, distance}\n")
+                #     else:
+                #         with open('distancias.txt', 'a') as file:
+                #             file.write(f"No se encontró ruta entre {comuna['Comuna']} y bodega {j}\n")
+                # else:
+                #     with open('distancias.txt', 'a') as file:
+                #         file.write(f"Error en la solicitud para {comuna['Comuna']} y bodega {j}. Código de estado: {response.status_code}\n")
+                                                                                        
+df = pd.DataFrame()
+print(rutas)
 for (comuna, bodega), distance in distances.items():
     if bodega not in df.columns:
         df[bodega] = None
     df.at[comuna, bodega] = distance
 
-df.to_excel("distancias_comunas_bodegas.xlsx")
+# # Guardar en un archivo JSON
+# with open('rutas.json', 'w') as archivo_json:
+#     json.dump(rutas, archivo_json)
 
+# df.to_excel("distancias_comunas_bodegas.xlsx")
 
 
