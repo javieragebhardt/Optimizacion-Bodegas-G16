@@ -13,14 +13,17 @@ class LocalizacionOptima:
 
     contador = 0
 
-    def __init__(self, p, v, t, filename, d):
+    def __init__(self, p, v, t, d):
         # Parámetros
         self.p = p
         self.v = v
         self.t = t
-        self.filename = filename
         self.h = construccion_datos.h
         self.d = d
+        if self.d == construccion_datos.d_Manhattan:
+            self.tipo_distancia = 'Manhattan'
+        elif self.d == construccion_datos.d_mapbox:
+            self.tipo_distancia = 'Mapbox'
         # Conjuntos
         self.I = construccion_datos.I
         self.J = construccion_datos.J
@@ -31,7 +34,7 @@ class LocalizacionOptima:
         self.y = self.m.addVars(self.I, self.J, vtype = GRB.CONTINUOUS, name = "y")
         self.m.update()
         # Función Objetivo
-        self.m.setObjective(quicksum(self.h[i] * self.d[i][j] * self.y[i, j] for i in self.I for j in self.J)) 
+        self.m.setObjective(quicksum(self.d[i][j] * self.y[i, j] for i in self.I for j in self.J)) 
         # Restricciones
         self.m.addConstrs((self.y.sum(i, '*') == 1 for i in self.I), name = "asignación_demanda")
         self.m.addConstrs((self.y[i, j] <= self.x[j] for i in self.I for j in self.J), name = "límite_asignación")
@@ -98,7 +101,7 @@ class LocalizacionOptima:
             ).add_to(m)
 
         # Guardar el mapa en un archivo HTML
-        m.save(f'mapa_p_{self.p}_v_{self.v}.html')
+        m.save(f'resultados/mapa_p_{self.p}_v_{self.v}_{self.tipo_distancia}.html')
 
     def generar_data_frame(self, dict, filename):
         df = pd.DataFrame(dict)
@@ -107,9 +110,27 @@ class LocalizacionOptima:
 
     def resolver(self):
         self.optimizar()
-        self.generar_data_frame(self.generar_diccionario_resultados(), self.filename)
+        # self.generar_data_frame(self.generar_diccionario_resultados(), self.filename)
+        self.calcular_tiempos()
         self.generar_mapa()
+        self.guardar_vo()
+        self.guardar_x()
         return self.generar_diccionario_resultados(), self.calcular_tiempos(), self.m.objVal
+    
+    def guardar_vo(self):
+        with open('resultados/valoresFO.txt', 'a') as file:
+            file.write(f"p_{self.p}_v_{self.v}_{self.tipo_distancia} = {self.m.ObjVal}\n")
+    
+    def guardar_x(self):
+        estado =  dict()
+        for j in self.J:
+            if self.x[j].x != 0:
+                estado[j] = 1
+            else:
+                estado[j] = 0
+        df = pd.DataFrame(estado, index=[0])
+        df = df.T
+        df.to_excel(f'resultados/bodegas_abiertas_p_{self.p}_v_{self.v}_{self.tipo_distancia}.xlsx', index=True)
     
     def calcular_tiempos(self):
         resultados = dict()
@@ -118,14 +139,36 @@ class LocalizacionOptima:
             for j in self.J:
                 if self.y[i, j].x > 0 and self.x[j].x > 0:
                     resultados[i]['Tiempo'] = self.d[i][j] / self.v  
-        self.generar_data_frame(resultados, f'tiempos_p_{self.p}_v_{self.v}.xlsx')  
+                    resultados[i]['Bodega Asignada'] = j
+        self.generar_data_frame(resultados, f'resultados/tiempos_p_{self.p}_v_{self.v}_{self.tipo_distancia}.xlsx')  
         return resultados
 
-#Definir diccionario de distancias a utilizar
-diccionario_distancia = construccion_datos.d_mapbox #construccion_datos.d_Manhattan
 
-# Correr modelo
-caso = LocalizacionOptima(1, 10, 0, f'resultados_p_{10}_v_45.xlsx', diccionario_distancia).resolver()
+#### Distintos casos #####
 
-dict_tiempos = caso[1]
-dict_v_obj = caso[2]
+# p-median p=10, p=5 y p=3 con v=45km/hr y distancia manhattan
+LocalizacionOptima(10, 45, 0, construccion_datos.d_Manhattan).resolver()
+LocalizacionOptima(5, 45, 0, construccion_datos.d_Manhattan).resolver()
+LocalizacionOptima(3, 45, 0, construccion_datos.d_Manhattan).resolver()
+
+# p-median p=10, p=5 y p=3 con v=30km/hr y distancia manhattan
+LocalizacionOptima(10, 30, 0, construccion_datos.d_Manhattan).resolver()
+LocalizacionOptima(5, 30, 0, construccion_datos.d_Manhattan).resolver()
+LocalizacionOptima(3, 30, 0, construccion_datos.d_Manhattan).resolver()
+
+# p-median p=10, p= 5 y p= 3 v=45km/hr y distancia mapbox
+LocalizacionOptima(10, 45, 0, construccion_datos.d_mapbox).resolver()
+LocalizacionOptima(5, 45, 0, construccion_datos.d_mapbox).resolver()
+LocalizacionOptima(3, 45, 0, construccion_datos.d_mapbox).resolver()
+
+# p-median p=10, p= 5 y p= 3 v=30km/hr y distancia mapbox
+LocalizacionOptima(10, 30, 0, construccion_datos.d_mapbox).resolver()
+LocalizacionOptima(5, 30, 0, construccion_datos.d_mapbox).resolver()
+LocalizacionOptima(3, 30, 0, construccion_datos.d_mapbox).resolver()
+
+# p-median p=10, p=5 y p=3 con v=15km/hr y distancia mapbox
+LocalizacionOptima(10, 15, 0, construccion_datos.d_mapbox).resolver()
+LocalizacionOptima(5, 15, 0, construccion_datos.d_mapbox).resolver()
+LocalizacionOptima(3, 15, 0, construccion_datos.d_mapbox).resolver()
+
+#TODO FALTA CORRER CASOS PARA DISTINTA CATEGORICACIÓN mapbox y v = 30 km/hr p=10, p= 5 y p= 3

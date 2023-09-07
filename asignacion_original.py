@@ -9,7 +9,7 @@ def generar_data_frame(dict, filename):
     df = df.T
     df.to_excel(filename, index=True)
 
-def generar_mapa(dict_clientes):
+def generar_mapa(dict_clientes, v):
     dict_bodegas = construccion_datos.dict_bodegas
     colores_bodega = {1: "blue", 2: "red", 3: "green", 4: "darkgreen", 5: "orange", 
                         6: "purple", 7: "gray", 8: "cadetblue", 9: "black", 
@@ -55,15 +55,19 @@ def generar_mapa(dict_clientes):
         ).add_to(m)
 
     # Guardar el mapa en un archivo HTML
-    m.save(f'mapa_p_{10}_v_{45}_original.html')
+    m.save(f'resultados/mapa_p_{10}_v_{v}_original.html')
 
-v = 45
+v1 = 30 
+v2 = 45
 I = construccion_datos.I
 J = construccion_datos.J
 h = construccion_datos.h
-d = construccion_datos.d
+d = construccion_datos.d_Manhattan
 dict_ventas = construccion_datos.dict_ventas
 dict_bodegas = construccion_datos.dict_bodegas
+
+
+# Caso base con v = 30 km/hr y distancia Manhattan
 
 suma = 0
 tiempos = dict()
@@ -72,8 +76,22 @@ for i in I:
     for j in J:
         if dict_ventas[i]['ID Bodega Despacho'] == j:
             suma += h[i] * d[i][j]
-            tiempos[i]['Tiempo'] = d[i][j] / v
+            tiempos[i]['Tiempo'] = d[i][j] / v1
 
-generar_data_frame(tiempos, f'tiempos_p_{10}_v_{v}_original.xlsx')
-generar_mapa(dict_ventas)
-print(suma)
+generar_data_frame(tiempos, f'resultados/tiempos_p_{10}_v_{30}_Manhattan_original.xlsx')
+generar_mapa(dict_ventas, v1)
+
+# Caso base con v = 45 km/hr y distancia Manhattan
+suma = 0
+tiempos = dict()
+for i in I:
+    tiempos[i] = dict()
+    for j in J:
+        if dict_ventas[i]['ID Bodega Despacho'] == j:
+            suma += h[i] * d[i][j]
+            tiempos[i]['Tiempo'] = d[i][j] / v2
+
+generar_data_frame(tiempos, f'resultados/tiempos_p_{10}_v_{45}_Manhattan_original.xlsx')
+generar_mapa(dict_ventas, v2)
+
+#TODO calcular valores FO para estos casos
