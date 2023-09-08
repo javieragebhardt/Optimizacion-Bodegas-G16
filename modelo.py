@@ -1,6 +1,5 @@
 import pandas as pd
 from gurobipy import Model, GRB, quicksum
-import numpy as np
 import construccion_datos
 import folium
 
