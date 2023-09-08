@@ -6,8 +6,7 @@ import folium
 
 class CasoBase:
 
-    def __init__(self, v, d):
-        self.v = v
+    def __init__(self, d):
         self.d = d
         self.I = construccion_datos.I
         self.J = construccion_datos.J
@@ -34,14 +33,14 @@ class CasoBase:
                 tiempo_max = 48
 
             for j in self.J:
-                if self.dict_ventas[i]['ID Bodega Despacho'] == j:
-                    self.vo += self.d[i][j]
-                    self.resultados[i]['Tiempo'] = self.d[i][j] / self.v
-                    self.resultados[i]['Bodega Asignada'] = j
-                    self.resultados[i]['Tiempo Categoría'] = tiempo_max
-                    self.resultados[i]['Cumple Mínimo'] = 0
-                    if self.d[i][j] / self.v <= tiempo_max:
-                        self.resultados[i]['Cumple Mínimo'] = 1
+                for v in [15, 30, 45]:
+                    if self.dict_ventas[i]['ID Bodega Despacho'] == j:
+                        self.resultados[i]['Tiempo'] = self.d[i][j] / v
+                        self.resultados[i]['Bodega Asignada'] = j
+                        self.resultados[i]['Tiempo Categoría'] = tiempo_max
+                        self.resultados[i][f'Cumple Mínimo v={v}'] = 0
+                        if self.d[i][j] / v <= tiempo_max:
+                            self.resultados[i][f'Cumple Mínimo v={v}'] = 1
 
     def generar_data_frame(self, dict, filename):
         df = pd.DataFrame(dict)
@@ -103,29 +102,23 @@ class CasoBase:
 
                 formatted_coords = [(coord[1], coord[0]) for coord in route_coords] 
 
-                folium.PolyLine(locations=formatted_coords, color=color, weight = 2.5, opacity = 1).add_to(m)
+                folium.PolyLine(locations=formatted_coords, color=color, popup=f'Cliente {cliente_id}', weight = 2.5, opacity = 1).add_to(m)
        
 
 
         # Guardar el mapa en un archivo HTML
-        m.save(f'resultados/mapa_v_{self.v}_{self.tipo_distancia}_caso_base.html')
+        m.save(f'resultados/mapa_{self.tipo_distancia}_caso_base.html')
 
     def guardar_vo(self):
         with open('resultados/valoresFO.txt', 'a') as file:
-            file.write(f"v_{self.v}_{self.tipo_distancia}_caso_base = {self.vo}\n")
+            file.write(f"{self.tipo_distancia}_caso_base = {self.vo}\n")
 
     def resolver(self):
         self.calculos()
-        self.generar_data_frame(self.resultados, f'resultados/tiempos_v_{self.v}_{self.tipo_distancia}_caso_base.xlsx')
+        self.generar_data_frame(self.resultados, f'resultados/tiempos_{self.tipo_distancia}_caso_base.xlsx')
         self.generar_mapa()
-        # self.guardar_vo()
-        
-# CasoBase(15, construccion_datos.d_Manhattan).resolver()
-CasoBase(15, construccion_datos.d_mapbox).resolver()
-# CasoBase(30, construccion_datos.d_Manhattan).resolver()
-# CasoBase(30, construccion_datos.d_mapbox).resolver()
-# CasoBase(45, construccion_datos.d_Manhattan).resolver()
-# CasoBase(45, construccion_datos.d_mapbox).resolver()
 
+CasoBase(construccion_datos.d_mapbox).resolver()
+CasoBase(construccion_datos.d_Manhattan).resolver()
 
 #TODO calcular valores FO para estos casos
