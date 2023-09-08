@@ -159,30 +159,30 @@ class LocalizacionOptima:
 
 #### Distintos casos #####
 
-# p-median p=10, p=5 y p=3 con v=45km/hr y distancia manhattan
-LocalizacionOptima(10, 45, 0, construccion_datos.d_Manhattan).resolver()
-LocalizacionOptima(5, 45, 0, construccion_datos.d_Manhattan).resolver()
-LocalizacionOptima(3, 45, 0, construccion_datos.d_Manhattan).resolver()
+# # p-median p=10, p=5 y p=3 con v=45km/hr y distancia manhattan
+# LocalizacionOptima(10, 45, 0, construccion_datos.d_Manhattan).resolver()
+# LocalizacionOptima(5, 45, 0, construccion_datos.d_Manhattan).resolver()
+# LocalizacionOptima(3, 45, 0, construccion_datos.d_Manhattan).resolver()
 
-# p-median p=10, p=5 y p=3 con v=30km/hr y distancia manhattan
-LocalizacionOptima(10, 30, 0, construccion_datos.d_Manhattan).resolver()
-LocalizacionOptima(5, 30, 0, construccion_datos.d_Manhattan).resolver()
-LocalizacionOptima(3, 30, 0, construccion_datos.d_Manhattan).resolver()
+# # p-median p=10, p=5 y p=3 con v=30km/hr y distancia manhattan
+# LocalizacionOptima(10, 30, 0, construccion_datos.d_Manhattan).resolver()
+# LocalizacionOptima(5, 30, 0, construccion_datos.d_Manhattan).resolver()
+# LocalizacionOptima(3, 30, 0, construccion_datos.d_Manhattan).resolver()
 
-# p-median p=10, p= 5 y p= 3 v=45km/hr y distancia mapbox
-LocalizacionOptima(10, 45, 0, construccion_datos.d_mapbox).resolver()
-LocalizacionOptima(5, 45, 0, construccion_datos.d_mapbox).resolver()
-LocalizacionOptima(3, 45, 0, construccion_datos.d_mapbox).resolver()
+# # p-median p=10, p= 5 y p= 3 v=45km/hr y distancia mapbox
+# LocalizacionOptima(10, 45, 0, construccion_datos.d_mapbox).resolver()
+# LocalizacionOptima(5, 45, 0, construccion_datos.d_mapbox).resolver()
+# LocalizacionOptima(3, 45, 0, construccion_datos.d_mapbox).resolver()
 
 # p-median p=10, p= 5 y p= 3 v=30km/hr y distancia mapbox
 LocalizacionOptima(10, 30, 0, construccion_datos.d_mapbox).resolver()
 LocalizacionOptima(5, 30, 0, construccion_datos.d_mapbox).resolver()
 LocalizacionOptima(3, 30, 0, construccion_datos.d_mapbox).resolver()
 
-# p-median p=10, p=5 y p=3 con v=15km/hr y distancia mapbox
-LocalizacionOptima(10, 15, 0, construccion_datos.d_mapbox).resolver()
-LocalizacionOptima(5, 15, 0, construccion_datos.d_mapbox).resolver()
-LocalizacionOptima(3, 15, 0, construccion_datos.d_mapbox).resolver()
+# # p-median p=10, p=5 y p=3 con v=15km/hr y distancia mapbox
+# LocalizacionOptima(10, 15, 0, construccion_datos.d_mapbox).resolver()
+# LocalizacionOptima(5, 15, 0, construccion_datos.d_mapbox).resolver()
+# LocalizacionOptima(3, 15, 0, construccion_datos.d_mapbox).resolver()
 
 #TODO FALTA CORRER CASOS PARA DISTINTA CATEGORICACIÓN mapbox y v = 30 km/hr p=10, p= 5 y p= 3
 
