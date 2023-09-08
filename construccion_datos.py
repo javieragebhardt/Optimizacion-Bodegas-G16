@@ -87,7 +87,28 @@ rutas = {
     for comuna, bodegas in data.items()
 }
 
+##### diccionario
+import copy
 
+def bodegas(diccionario, b1, b2, b3, b4, b5, b6, b7):
+    diccionario_copia = copy.deepcopy(diccionario)  
+    for key in diccionario_copia:
+        """diccionario_copia[key][b1] = 99999
+        diccionario_copia[key][b3] = 99999
+        diccionario_copia[key][b2] = 99999
+        diccionario_copia[key][b4] = 99999
+        diccionario_copia[key][b5] = 99999
+        diccionario_copia[key][b6] = 99999
+        diccionario_copia[key][b7] = 99999"""
+        min_valor = min(diccionario_copia[key].values())
+        for sub_key in diccionario_copia[key]:
+            if diccionario_copia[key][sub_key] == min_valor:
+                diccionario_copia[key][sub_key] = 99999
+    return diccionario_copia
+
+"""dic_segunda_bodega = bodegas(d_mapbox, 2, 3, 5, 6, 7, 9, 10)""" #para p = 3
+"""dic_segunda_bodega = bodegas(d_mapbox, 2, 4, 6, 8, 10, 0, 0)""" # para p = 5
+dic_segunda_bodega = bodegas(d_mapbox, 0, 0, 0, 0, 0, 0, 0) # para p = 10
 
 ######## definición de h
 

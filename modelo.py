@@ -21,6 +21,8 @@ class LocalizacionOptima:
             self.tipo_distancia = 'Manhattan'
         elif self.d == construccion_datos.d_mapbox:
             self.tipo_distancia = 'Mapbox'
+        else:
+            self.tipo_distancia = 'Segunda Bodega'
         self.rutas = construccion_datos.rutas
         self.resultados = dict()
         # Conjuntos
@@ -163,3 +165,4 @@ for p in [3, 5, 10]:
 
 #TODO FALTA CORRER CASOS PARA DISTINTA CATEGORICACIÓN mapbox y v = 30 km/hr p=10, p= 5 y p= 3
 
+#LocalizacionOptima(10, construccion_datos.dic_segunda_bodega).resolver()   # para segunda bodega mas cercana con p = 10
