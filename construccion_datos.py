@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import math
 import json
 
 # Importación base de datos
@@ -62,6 +63,21 @@ for i in dict_ventas.keys():
         elif round((lat_diff + lon_diff)/1000, 2) == 0:
             d_Manhattan[i][j] = 0.01
 
+# Definir coordenadas en x e y de clientes
+def calcular_coordenadas_xy(lat, lon):
+    x = radio_tierra * math.radians(lon)/1000
+    y = radio_tierra * math.log(math.tan(math.pi / 4 + math.radians(lat) / 2))/1000
+    return [x, y]
+
+def calcular_coordenadas_LL(x, y): #TODO revisar
+    longitud = math.degrees(x / radio_tierra)
+    latitud = math.degrees(2 * math.atan(math.exp(math.radians(y / radio_tierra))) - math.pi / 2)
+    return latitud, longitud
+
+a = dict()
+for cliente in dict_ventas.keys():
+    a[cliente] = calcular_coordenadas_xy(dict_ventas[cliente]['LAT'], dict_ventas[cliente]['LON'])
+    
 # Descargamos matriz de distancias en red
 distancias_en_red = pd.read_excel("distancias_comunas_bodegas.xlsx")
 distancias_en_red = distancias_en_red.replace(0, 0.0001)
