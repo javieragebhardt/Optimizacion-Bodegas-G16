@@ -72,6 +72,6 @@ for (comuna, bodega), distance in distances.items():
 with open('rutas.json', 'w') as archivo_json:
     json.dump(rutas, archivo_json)
 
-# df.to_excel("distancias_comunas_bodegas.xlsx")
+# df.to_excel("distancias_comunas_bodegas_mapbox.xlsx")
 
 

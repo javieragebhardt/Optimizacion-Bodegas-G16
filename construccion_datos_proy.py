@@ -8,7 +8,6 @@ bdd_categoria = "BDD_Bodegas_Categorizada_proy.xlsx"
 bdd_ventas = pd.read_excel(bdd_categoria)
 bdd_bodegas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=2)
 bdd_comunas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=3)
-bdd_comuna_bodega = pd.read_excel("distancias_comunas_bodegas.xlsx")
 
 # Pasamos la columna de fechas a formato de fechas
 bdd_ventas['Fecha'] = pd.to_datetime(bdd_ventas['Fecha'])
@@ -23,20 +22,6 @@ bdd_ventas_agrupadas = bdd_ventas_agrupadas[bdd_ventas_agrupadas["Cantidad"] != 
 dict_bodegas = bdd_bodegas.set_index('ID Bodega')[['LAT', 'LONG']].to_dict(orient='index') 
 dict_ventas = bdd_ventas_agrupadas.set_index('ID Cliente')[['Cantidad', 'Comuna Despacho', 'LAT', 'LON', 'ID Bodega Despacho', 'Categoria']].to_dict(orient='index') 
 
-# Transpone el DataFrame para tener las columnas como índices
-df = bdd_comuna_bodega.T
-
-# Crea un diccionario para almacenar los datos
-dict_comunas_bodegas = {}
-
-# Itera a través de las columnas del DataFrame
-for columna in df.columns:
-    # Obtiene los valores de la columna como una lista
-    valores = df[columna].tolist()    
-    # Agrega el diccionario de la columna al diccionario principal
-    dict_comunas_bodegas[valores[0]] = {i: valores[i] for i in range(1,11)}
-
-# Ahora, data_dict contiene el diccionario que deseas
 
 # Radio aproximado de la Tierra en metros
 radio_tierra = 6371000  # metros
@@ -78,7 +63,7 @@ for cliente in dict_ventas.keys():
 
     
 # Descargamos matriz de distancias en red
-distancias_en_red = pd.read_excel("distancias_comunas_bodegas.xlsx")
+distancias_en_red = pd.read_excel("distancias_comunas_bodegas_mapbox.xlsx")
 distancias_en_red = distancias_en_red.replace(0, 0.0001)
 
 #### Creamos otro diccionario

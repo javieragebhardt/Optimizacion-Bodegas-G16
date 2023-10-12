@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import math
 import json
+import pyproj
 
 # Importación base de datos
 bdd_categoria = "BDD_Bodegas_Categorizada.xlsx"
@@ -9,7 +10,6 @@ bdd_ventas = pd.read_excel(bdd_categoria)
 bdd_proyeccion = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=1)
 bdd_bodegas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=2)
 bdd_comunas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=3)
-bdd_comuna_bodega = pd.read_excel("distancias_comunas_bodegas.xlsx")
 
 # Pasamos la columna de fechas a formato de fechas
 bdd_ventas['Fecha'] = pd.to_datetime(bdd_ventas['Fecha'])
@@ -25,20 +25,6 @@ bdd_ventas_agrupadas = bdd_ventas_agrupadas[bdd_ventas_agrupadas["Cantidad"] != 
 dict_bodegas = bdd_bodegas.set_index('ID Bodega')[['LAT', 'LONG']].to_dict(orient='index') 
 dict_ventas = bdd_ventas_agrupadas.set_index('ID Cliente')[['Cantidad', 'Comuna Despacho', 'LAT', 'LON', 'ID Bodega Despacho', 'Categoria']].to_dict(orient='index') 
 
-# Transpone el DataFrame para tener las columnas como índices
-df = bdd_comuna_bodega.T
-
-# Crea un diccionario para almacenar los datos
-dict_comunas_bodegas = {}
-
-# Itera a través de las columnas del DataFrame
-for columna in df.columns:
-    # Obtiene los valores de la columna como una lista
-    valores = df[columna].tolist()    
-    # Agrega el diccionario de la columna al diccionario principal
-    dict_comunas_bodegas[valores[0]] = {i: valores[i] for i in range(1,11)}
-
-# Ahora, data_dict contiene el diccionario que deseas
 
 # Radio aproximado de la Tierra en metros
 radio_tierra = 6371000  # metros
@@ -63,24 +49,69 @@ for i in dict_ventas.keys():
         elif round((lat_diff + lon_diff)/1000, 2) == 0:
             d_Manhattan[i][j] = 0.01
 
+
 # Definir coordenadas en x e y de clientes
 def calcular_coordenadas_xy(lat, lon):
     x = - radio_tierra * math.radians(lon)/1000
     y = - radio_tierra * math.log(math.tan(math.pi / 4 + math.radians(lat) / 2))/1000
     return [x, y]
 
+
+def calcular_coordenadas_xy_2(lat, lon):
+    transformer =  pyproj.Transformer.from_crs("epsg:4326", "epsg:3857", always_xy=True)
+    x, y = transformer.transform(lon, lat)
+    return [- x/1000, - y/1000]
+
+def calcular_xy_coordenadas_2(x, y):
+    x = - x * 1000
+    y = - y * 1000
+    transformer =  pyproj.Transformer.from_crs("epsg:3857", "epsg:4326", always_xy=True)
+    lon, lat = transformer.transform(x, y)
+    return [lon, lat]
+
+
 def calcular_coordenadas_LL(x, y): 
     longitud = math.degrees(- x / radio_tierra)
     latitud = math.degrees(2 * math.atan(math.exp(math.radians(- y / radio_tierra))) - math.pi / 2) 
     return latitud, longitud
 
+
+# # Crear diccionario que contiene las distancias Manhattan
+# d_Manhattan_2 = dict() # Distancias Manhattan
+
+# proj = pyproj.Transformer.from_crs(4326, 3857, always_xy=True)
+
+# #####
+# for cliente in dict_ventas.keys():
+#     x, y = proj.transform(dict_ventas[cliente]['LON'], dict_ventas[cliente]['LAT'])
+#     dict_ventas[cliente]["x"] = -x/1000
+#     dict_ventas[cliente]["y"] = -y/1000
+
+# for bodega in dict_bodegas.keys():
+#     x, y = proj.transform(dict_bodegas[bodega]['LONG'], dict_bodegas[bodega]['LAT'])
+#     dict_bodegas[bodega]["x"] = -x/1000
+#     dict_bodegas[bodega]["y"] = -y/1000
+
+# d_Manhattan_2 = dict()
+
+# for i in dict_ventas.keys():
+#     d_Manhattan_2[i] = dict()
+#     for j in dict_bodegas.keys():
+#         dif_x = abs(dict_bodegas[j]['x'] - dict_ventas[i]['x'])
+#         dif_y = abs(dict_bodegas[j]['y'] - dict_ventas[i]['y'])
+#         if round((dif_x + dif_y), 2) > 0 :
+#             d_Manhattan_2[i][j] = round((dif_x + dif_y), 2)
+#         else:
+#             d_Manhattan_2[i][j] = 0.01
+
+
 a = dict()
 for cliente in dict_ventas.keys():
-    a[cliente] = calcular_coordenadas_xy(dict_ventas[cliente]['LAT'], dict_ventas[cliente]['LON'])
+    a[cliente] = calcular_coordenadas_xy_2(dict_ventas[cliente]['LAT'], dict_ventas[cliente]['LON'])
 
     
 # Descargamos matriz de distancias en red
-distancias_en_red = pd.read_excel("distancias_comunas_bodegas.xlsx")
+distancias_en_red = pd.read_excel("distancias_comunas_bodegas_mapbox.xlsx")
 distancias_en_red = distancias_en_red.replace(0, 0.0001)
 
 #### Creamos otro diccionario
@@ -97,6 +128,7 @@ for i in dict_ventas.keys():
 # Lee el archivo JSON
 with open('rutas.json', 'r') as archivo_json:
     data = json.load(archivo_json)
+print('hola')
 
 # Convierte los índices de bodegas a enteros
 rutas = {
@@ -126,6 +158,7 @@ def bodegas(diccionario, b1, b2, b3, b4, b5, b6, b7):
 """dic_segunda_bodega = bodegas(d_mapbox, 2, 3, 5, 6, 7, 9, 10)""" #para p = 3
 """dic_segunda_bodega = bodegas(d_mapbox, 2, 4, 6, 8, 10, 0, 0)""" # para p = 5
 dic_segunda_bodega = bodegas(d_mapbox, 0, 0, 0, 0, 0, 0, 0) # para p = 10
+print('hola')
 
 ######## definición de h
 
