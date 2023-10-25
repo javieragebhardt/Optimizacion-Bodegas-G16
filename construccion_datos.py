@@ -128,7 +128,6 @@ for i in dict_ventas.keys():
 # Lee el archivo JSON
 with open('rutas.json', 'r') as archivo_json:
     data = json.load(archivo_json)
-print('hola')
 
 # Convierte los índices de bodegas a enteros
 rutas = {
@@ -158,7 +157,6 @@ def bodegas(diccionario, b1, b2, b3, b4, b5, b6, b7):
 """dic_segunda_bodega = bodegas(d_mapbox, 2, 3, 5, 6, 7, 9, 10)""" #para p = 3
 """dic_segunda_bodega = bodegas(d_mapbox, 2, 4, 6, 8, 10, 0, 0)""" # para p = 5
 dic_segunda_bodega = bodegas(d_mapbox, 0, 0, 0, 0, 0, 0, 0) # para p = 10
-print('hola')
 
 ######## definición de h
 
@@ -183,6 +181,25 @@ def generar_t(bdd, inferior, superior):
 
     return t
 
+# Diccionario M para almacenar las distancias máximas
+M = {}
+
+# Bucle para cada cliente
+for i in dict_ventas.keys():
+    max_distance = 0  # Inicializa la distancia máxima para el cliente i
+
+    # Bucle para todas las bodegas
+    for j in dict_bodegas.keys():
+        # Calcula la distancia entre el cliente i y la bodega j 
+        distance = d_Manhattan[i][j]
+
+        # Actualiza la distancia máxima si es mayor
+        if distance > max_distance:
+            max_distance = distance
+
+    # Almacena la distancia máxima para el cliente i en el diccionario M
+    M[i] = max_distance + (max_distance*0.01) #Acá podríamos darle un margen 1% del maximo este caso
+    # No se si quieren redondear tmb round(max_distance + max_distance*0.01, 2)
 
 ######## definición de I
 I = list(dict_ventas.keys())

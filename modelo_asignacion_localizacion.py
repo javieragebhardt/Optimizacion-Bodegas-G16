@@ -40,7 +40,7 @@ for i in range(1, 3):
 p = 3
 
 J = range(1, p + 1)
-M = 1400 #TODO VER
+M = construccion_datos.M #implementar Nuevo M
 N = M
 a = construccion_datos.a
 
@@ -102,7 +102,12 @@ m.setObjective(quicksum(D[i, j] for i in I for j in J), GRB.MINIMIZE)
 # Restricciones
 m.addConstrs((quicksum(z[i, j] for j in J) == 1 for i in I), name="asignación clientes-bodega")
 
-m.addConstrs((M * z[i, j] >= D[i, j] for i in I for j in J), name='relacion z-D')
+# Modificar esta restricción para cada M
+m.addConstrs((M[i] * z[i, j] >= D[i, j] for i in I for j in J), name='relacion z-D')
+## Más legible lo anterior, Restricción: M * z[i, j] >= D[i, j] para cada cliente y bodega:
+# for i in I:
+#     for j in J:
+#         m.addConstr(M[i] * z[i, j] >= D[i, j], name=f'relacion_z-D_{i}_{j}')
 
 m.addConstrs((a[i][0] - x[j] == delta_x_pos[i, j] - delta_x_neg[i, j] for i in I for j in J), name='deltas 1')
 
