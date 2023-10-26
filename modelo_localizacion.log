@@ -1,0 +1,180 @@
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:32:12 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:33:50 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:35:06 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:35:36 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:37:37 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (mac64[x86])
+
+CPU model: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 230771 rows, 170960 columns and 541314 nonzeros
+Model fingerprint: 0x2a99f09d
+Variable types: 142470 continuous, 28490 integer (28490 binary)
+Coefficient statistics:
+  Matrix range     [1e-02, 2e+03]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e-02, 8e+03]
+
+Warning: Completing partial solution with 28490 unfixed non-continuous variables out of 28490
+User MIP start did not produce a new incumbent solution
+
+Presolve removed 113960 rows and 23296 columns
+Presolve time: 0.09s
+
+Explored 0 nodes (0 simplex iterations) in 0.53 seconds (0.32 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+User-callback calls 313, time in user-callback 0.00 sec
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:41:42 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:43:08 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:44:15 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:45:49 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:46:53 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (mac64[x86])
+
+CPU model: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 71227 rows, 51288 columns and 162397 nonzeros
+Model fingerprint: 0x452230a0
+Variable types: 42741 continuous, 8547 integer (8547 binary)
+Coefficient statistics:
+  Matrix range     [1e-02, 2e+03]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e-02, 8e+03]
+
+Warning: Completing partial solution with 8547 unfixed non-continuous variables out of 8547
+User MIP start did not produce a new incumbent solution
+
+Presolve removed 34188 rows and 7510 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.15 seconds (0.09 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+User-callback calls 138, time in user-callback 0.00 sec
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:47:41 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (mac64[x86])
+
+CPU model: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 71227 rows, 51288 columns and 162397 nonzeros
+Model fingerprint: 0x85886744
+Variable types: 42741 continuous, 8547 integer (8547 binary)
+Coefficient statistics:
+  Matrix range     [1e-02, 2e+03]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e-02, 8e+03]
+Presolve removed 34188 rows and 7510 columns
+Presolve time: 0.03s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds (0.05 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+User-callback calls 93, time in user-callback 0.00 sec
+
+Gurobi 10.0.1 (mac64[x86]) logging started Thu Oct 26 08:48:49 2023
+
+Set parameter LogFile to value "modelo_localizacion.log"
+Set parameter StartNodeLimit to value 100000
+Set parameter TimeLimit to value 300
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (mac64[x86])
+
+CPU model: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 71227 rows, 51288 columns and 162397 nonzeros
+Model fingerprint: 0x85886744
+Variable types: 42741 continuous, 8547 integer (8547 binary)
+Coefficient statistics:
+  Matrix range     [1e-02, 2e+03]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e-02, 8e+03]
+Presolve removed 34188 rows and 7510 columns
+Presolve time: 0.04s
+
+Explored 0 nodes (0 simplex iterations) in 0.08 seconds (0.05 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+User-callback calls 93, time in user-callback 0.00 sec
