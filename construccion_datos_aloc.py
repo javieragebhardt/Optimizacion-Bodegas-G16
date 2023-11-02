@@ -58,6 +58,16 @@ def calcular_coordenadas_xy(lat, lon):
 
 
 def calcular_coordenadas_xy_2(lat, lon):
+<<<<<<< HEAD
+    transformer =  pyproj.Transformer.from_crs("epsg:20040", "epsg:20049", always_xy=True)
+    x, y = transformer.transform(lon, lat)
+    return [x/1000, y/1000]
+
+def calcular_xy_coordenadas_2(x, y):
+    x = x * 1000
+    y = y * 1000
+    transformer =  pyproj.Transformer.from_crs("epsg:20049", "epsg:20040", always_xy=True)
+=======
     transformer =  pyproj.Transformer.from_crs("epsg:4326", "epsg:3857", always_xy=True)
     x, y = transformer.transform(lon, lat)
     return [- x/1000, - y/1000]
@@ -66,6 +76,7 @@ def calcular_xy_coordenadas_2(x, y):
     x = - x * 1000
     y = - y * 1000
     transformer =  pyproj.Transformer.from_crs("epsg:3857", "epsg:4326", always_xy=True)
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
     lon, lat = transformer.transform(x, y)
     return [lon, lat]
 
@@ -75,6 +86,14 @@ def calcular_coordenadas_LL(x, y):
     latitud = math.degrees(2 * math.atan(math.exp(math.radians(- y / radio_tierra))) - math.pi / 2) 
     return latitud, longitud
 
+<<<<<<< HEAD
+# Cargar el archivo JSON como un diccionario
+with open('d_manhattan_2.json', 'r') as archivo_json:
+    d_Manhattan_2 = json.load(archivo_json)
+
+d_Manhattan_2 = {int(k1): {int(k2): v2 for k2, v2 in v1.items()} for k1, v1 in d_Manhattan_2.items()}
+=======
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
 a = dict()
 for cliente in dict_ventas.keys():
@@ -89,11 +108,18 @@ distancias_en_red = distancias_en_red.replace(0, 0.0001)
 
 h = bdd_ventas_agrupadas.set_index('ID Cliente')['Cantidad'].to_dict()
 
+<<<<<<< HEAD
+# Diccionario N para almacenar las distancias máximas
+
+error = 0
+N = {}
+=======
 # Diccionario M para almacenar las distancias máximas
 
 error = 0
 # Diccionario M para almacenar las distancias máximas
 M = {}
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
 # Bucle para cada cliente
 for i in dict_ventas.keys():
@@ -102,16 +128,49 @@ for i in dict_ventas.keys():
     # Bucle para todas las bodegas
     for j in dict_bodegas.keys():
         # Calcula la distancia entre el cliente i y la bodega j 
+<<<<<<< HEAD
+        distance = d_Manhattan_2[i][j]
+=======
         distance = d_Manhattan[i][j]
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
         # Actualiza la distancia máxima si es mayor
         if distance > max_distance:
             max_distance = distance
 
     # Almacena la distancia máxima para el cliente i en el diccionario M
+<<<<<<< HEAD
+    N[i] = max_distance + (max_distance*error) #Acá podríamos darle un margen 1% del maximo este caso
+    # No se si quieren redondear tmb round(max_distance + max_distance*0.01, 2)
+
+# Diccionario M para almacenar las distancias mínimas
+error_2 = 13
+M = {}
+
+# Bucle para cada cliente
+for i in dict_ventas.keys():
+    min_distance = 10000  # Inicializa la distancia máxima para el cliente i
+
+    # Bucle para todas las bodegas
+    for j in dict_bodegas.keys():
+        # Calcula la distancia entre el cliente i y la bodega j 
+        distance = d_Manhattan_2[i][j]
+
+        # Actualiza la distancia máxima si es mayor
+        if distance < min_distance and distance >= 30:
+            min_distance = distance
+
+    # Almacena la distancia máxima para el cliente i en el diccionario M
+    M[i] = min_distance + (min_distance*error_2) #Acá podríamos darle un margen 1% del maximo este caso
+    # No se si quieren redondear tmb round(max_distance + max_distance*0.01, 2)
+
+
+
+=======
     M[i] = max_distance + (max_distance*error) #Acá podríamos darle un margen 1% del maximo este caso
     # No se si quieren redondear tmb round(max_distance + max_distance*0.01, 2)
 
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 ######## definición de I
 I = list(dict_ventas.keys())
 
@@ -123,5 +182,14 @@ J = range(1, p + 1)
 ######## Localizaciones iniciales
 
 localizaciones_iniciales = dict()
+<<<<<<< HEAD
+for i in [9, 4, 1]:
+    localizaciones_iniciales[i] = calcular_coordenadas_xy_2(dict_bodegas[i]['LAT'], dict_bodegas[i]['LONG'])
+    print(localizaciones_iniciales[i])
+
+
+
+=======
 for i in range(1, 11):
     localizaciones_iniciales[i] = calcular_coordenadas_xy_2(dict_bodegas[i]['LAT'], dict_bodegas[i]['LONG'])
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8

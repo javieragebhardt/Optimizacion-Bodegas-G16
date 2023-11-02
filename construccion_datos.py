@@ -58,23 +58,30 @@ def calcular_coordenadas_xy(lat, lon):
 
 
 def calcular_coordenadas_xy_2(lat, lon):
-    transformer =  pyproj.Transformer.from_crs("epsg:4326", "epsg:3857", always_xy=True)
+    transformer =  pyproj.Transformer.from_crs("epsg:20040", "epsg:20049", always_xy=True)
     x, y = transformer.transform(lon, lat)
-    return [- x/1000, - y/1000]
+    return [x/1000, y/1000]
 
 def calcular_xy_coordenadas_2(x, y):
-    x = - x * 1000
-    y = - y * 1000
-    transformer =  pyproj.Transformer.from_crs("epsg:3857", "epsg:4326", always_xy=True)
+    x = x * 1000
+    y = y * 1000
+    transformer =  pyproj.Transformer.from_crs("epsg:20049", "epsg:20040", always_xy=True)
     lon, lat = transformer.transform(x, y)
     return [lon, lat]
-
 
 def calcular_coordenadas_LL(x, y): 
     longitud = math.degrees(- x / radio_tierra)
     latitud = math.degrees(2 * math.atan(math.exp(math.radians(- y / radio_tierra))) - math.pi / 2) 
     return latitud, longitud
 
+print('hola1')
+
+
+# Cargar el archivo JSON como un diccionario
+with open('d_manhattan_2.json', 'r') as archivo_json:
+    d_Manhattan_2 = json.load(archivo_json)
+
+d_Manhattan_2 = {int(k1): {int(k2): v2 for k2, v2 in v1.items()} for k1, v1 in d_Manhattan_2.items()}
 
 # # Crear diccionario que contiene las distancias Manhattan
 # d_Manhattan_2 = dict() # Distancias Manhattan

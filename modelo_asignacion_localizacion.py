@@ -133,15 +133,15 @@ for i in I:
 # Optimiza el modelo
 m.optimize(mycallback)
 
-# Verificar si se detuvo debido a la brecha de optimización
-if m.status == GRB.OPTIMAL:
-    print("Optimización exitosa.")
-elif m.status == GRB.TIME_LIMIT:
-    print("Se detuvo debido al límite de tiempo.")
-elif m.status == GRB.OBJ_LIMIT:
-    print("Se detuvo debido al límite de brecha de optimización.")
-else:
-    print("Optimización finalizada con estado:", m.status)
+# # Verificar si se detuvo debido a la brecha de optimización
+# if m.status == GRB.OPTIMAL:
+#     print("Optimización exitosa.")
+# elif m.status == GRB.TIME_LIMIT:
+#     print("Se detuvo debido al límite de tiempo.")
+# elif m.status == GRB.OBJ_LIMIT:
+#     print("Se detuvo debido al límite de brecha de optimización.")
+# else:
+#     print("Optimización finalizada con estado:", m.status)
 
 
 # Solución:

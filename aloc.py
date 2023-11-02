@@ -13,15 +13,28 @@ import csv
 I = construccion_datos_aloc.I
 J = construccion_datos_aloc.J
 a = construccion_datos_aloc.a
+<<<<<<< HEAD
+N = construccion_datos_aloc.N
+localizaciones_iniciales = construccion_datos_aloc.localizaciones_iniciales
+M = construccion_datos_aloc.M
+
+print(f"Largos: {len(I)}, {len(J)}")
+
+=======
 M = construccion_datos_aloc.M
 localizaciones_iniciales = construccion_datos_aloc.localizaciones_iniciales
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
 # MODELO:
 
 m = Model()
 
 m.setParam('StartNodeLimit', 100000)
+<<<<<<< HEAD
+# m.Params.TimeLimit = 20
+=======
 m.Params.TimeLimit = 300
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
 
 # Variables
@@ -43,13 +56,21 @@ m.setObjective(quicksum(D[i, j] for i in I for j in J), GRB.MINIMIZE)
 m.addConstrs((quicksum(z[i, j] for j in J) == 1 for i in I), name="asignación clientes-bodega")
 
 # Modificar esta restricción para cada M
+<<<<<<< HEAD
+m.addConstrs((M[i]* z[i, j] >= D[i, j] for i in I for j in J), name='relacion z-D')
+=======
 m.addConstrs((M[i] * z[i, j] >= D[i, j] for i in I for j in J), name='relacion z-D')
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
 m.addConstrs((a[i][0] - x[j] == delta_x_pos[i, j] - delta_x_neg[i, j] for i in I for j in J), name='deltas 1')
 
 m.addConstrs((a[i][1] - y[j] == delta_y_pos[i, j] - delta_y_neg[i, j] for i in I for j in J), name='deltas 2')
 
+<<<<<<< HEAD
+m.addConstrs((D[i, j] >= delta_x_pos[i, j] + delta_x_neg[i, j] + delta_y_pos[i, j] + delta_y_neg[i, j] - N[i] * (1 - z[i, j]) for i in I for j in J), name='definición de D')
+=======
 m.addConstrs((D[i, j] >= delta_x_pos[i, j] + delta_x_neg[i, j] + delta_y_pos[i, j] + delta_y_neg[i, j] - M[i] * (1 - z[i, j]) for i in I for j in J), name='definición de D')
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
 m.addConstrs((delta_x_pos[i, j] >= 0 for i in I for j in J), name='delta x positivo')
 m.addConstrs((delta_x_neg[i, j] >= 0 for i in I for j in J), name='delta x negativo')
@@ -57,15 +78,48 @@ m.addConstrs((delta_y_pos[i, j] >= 0 for i in I for j in J), name='delta y posit
 m.addConstrs((delta_y_neg[i, j] >= 0 for i in I for j in J), name='delta y negativo')
 m.addConstrs(y[j] <= y[j+1] for j in J[:-1])
 
+<<<<<<< HEAD
+#Solucion inicial entregada
+for j, [x_val, y_val] in localizaciones_iniciales.items():
+    # if j <= construccion_datos_aloc.p:
+    if j == 9:
+        val = 1
+    elif j == 4:
+        val = 2
+    elif j == 1:
+        val = 3
+    x[val].start = x_val
+    y[val].start = y_val
+
+
+#Calculamos el valor objetivo de esta solución inicial:
+objective_value = 0
+for i in I:
+    for j in J:
+        objective_value += abs(a[i][0]-x[j].start) + abs(a[i][1]-y[j].start)
+
+print(f"Objetivo: {objective_value}")
+
+=======
 for j, [x_val, y_val] in localizaciones_iniciales.items():
     if j <= construccion_datos_aloc.p:
         x[j].start = x_val
         y[j].start = y_val
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
 # Optimiza el modelo
 m.optimize()
 
 
+<<<<<<< HEAD
+# Para ver cuales son las restricciones infactibles
+#m.computeIIS()
+
+#m.write("model.ilp")
+
+
+=======
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 # Solución:
 for j in J:
     print(j, x[j].x, y[j].x)
@@ -83,6 +137,117 @@ for j in J:
 print(f'Valor objetivo: {m.objVal}')
 
 
+<<<<<<< HEAD
+#guardar bodegas
+localizacion_bodegas = dict()
+for j in J:
+    localizacion_bodegas[j] = dict()
+    xy = construccion_datos.calcular_xy_coordenadas_2(x[j].x, y[j].x)
+    print(f'Bodega {j}:  LON: {xy[0]}, LAT: {xy[1]}')
+    localizacion_bodegas[j]['LON'] = xy[0]
+    localizacion_bodegas[j]['LAT'] = xy[1]
+
+
+dict_resultados = dict()
+
+ventas = construccion_datos.dict_ventas
+for i in I:
+    dict_resultados[i] = dict()
+    categoria = ventas[i]['Categoria'] 
+    if categoria == 'Premium':
+        tiempo_max = 12
+    elif categoria == 'Gold':
+        tiempo_max = 24
+    elif categoria == 'Silver':
+        tiempo_max = 48
+    for j in J:
+        for v in [45]:
+            # dict_resultados[i]['Tiempo'] = 0
+            # dict_resultados[i]['Bodega Asignada'] = 0
+            # dict_resultados[i]['Tiempo Categoría'] = tiempo_max
+            # dict_resultados[i][f'Cumple Mínimo v={v}'] = 0            
+            if D[i, j].x > 0:
+                dict_resultados[i]['Tiempo'] = D[i, j].x / v
+                dict_resultados[i]['Bodega Asignada'] = j
+                dict_resultados[i]['Tiempo Categoría'] = tiempo_max
+                dict_resultados[i][f'Cumple Mínimo v={v}'] = 0
+                if D[i, j].x / v <= tiempo_max:
+                    dict_resultados[i][f'Cumple Mínimo v={v}'] = 1
+
+
+    
+dict_bodegas = construccion_datos.dict_bodegas
+colores_bodega = {1: "blue", 2: "red", 3: "green", 4: "darkblue", 5: "orange", 
+                    6: "purple", 7: "gray", 8: "cadetblue", 9: "black", 
+                    10: "darkgreen"}
+
+# Crear un mapa centrado en una ubicación inicial
+m = folium.Map(location=[-33.45, -70.65], zoom_start=7)
+
+# Agregar marcadores para las bodegas que tienen al menos un cliente asignado
+for bodega_id, coordenadas in localizacion_bodegas.items():
+    if bodega_id in (cliente['Bodega Asignada'] for cliente in dict_resultados.values()):
+        num = bodega_id
+        if num == 10:
+            num = 'warehouse'
+        lat = coordenadas['LAT']
+        lon = coordenadas['LON']
+        folium.Marker(
+            location=[lat, lon],
+            popup=f'Bodega {bodega_id}',
+            icon=folium.Icon(icon=str(num), prefix='fa', 
+                            color=colores_bodega[bodega_id])
+        ).add_to(m)
+
+# Agregar círculos para los clientes en el mapa con colores de bodega
+dict_clientes = construccion_datos.dict_ventas
+for cliente_id, datos_cliente in dict_resultados.items():
+    if datos_cliente:
+        if datos_cliente['Bodega Asignada'] == 0:
+            print(f'cliente {cliente_id} no asignado')
+        elif len(datos_cliente) != 0:
+            lat = dict_clientes[cliente_id]['LAT']
+            lon = dict_clientes[cliente_id]['LON']
+            destino = [lat, lon]
+            comuna = dict_clientes[cliente_id]['Comuna Despacho']
+            color = colores_bodega[datos_cliente['Bodega Asignada']]
+            folium.Circle(
+                location=[lat, lon],
+                radius=1000,  # Radio del círculo en metros
+                popup=f'Cliente {cliente_id}',
+                color=color,
+                fill=True,
+                fill_color=color
+            ).add_to(m)
+            # Conectar el cliente con su bodega asignada con una línea coloreada
+            bodega_coords = localizacion_bodegas[datos_cliente['Bodega Asignada']]
+            origen = [bodega_coords['LAT'], bodega_coords['LON']]
+            folium.PolyLine(
+                locations=[[(destino[0], origen[1]), (origen[0], origen[1])]],
+                color=color,
+                weight=2.5,
+                opacity=1,
+                popup=f'Cliente {cliente_id}'
+            ).add_to(m)
+
+            folium.PolyLine(
+                locations=[[(destino[0], destino[1]), (destino[0], origen[1])]],
+                color=color,
+                weight=2.5,
+                opacity=1,
+                popup=f'Cliente {cliente_id}'
+            ).add_to(m)
+
+            # elif self.d == construccion_datos.d_mapbox:
+            #     route_coords = self.rutas[comuna][datos_cliente['Bodega Asignada']]
+            #     formatted_coords = [(coord[1], coord[0]) for coord in route_coords] 
+            #     folium.PolyLine(locations=formatted_coords, color=color, popup=f'Cliente {cliente_id}', weight = 2.5, opacity = 1).add_to(m)
+        else:
+            print(f'cliente {cliente_id} no asignado')
+
+m.save(f'resultados/mapa_p_3_localizacion_asignacion.html')
+=======
 
 
 
+>>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8

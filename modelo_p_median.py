@@ -21,8 +21,8 @@ class LocalizacionOptima:
         self.d = d
         if self.d == construccion_datos.d_Manhattan:
             self.tipo_distancia = 'Manhattan'
-        # elif self.d == construccion_datos.d_Manhattan_2:
-        #     self.tipo_distancia = 'Manhattan_2'
+        elif self.d == construccion_datos.d_Manhattan_2:
+            self.tipo_distancia = 'Manhattan_2'
         elif self.d == construccion_datos.d_mapbox:
             self.tipo_distancia = 'Mapbox'
         else:
@@ -60,7 +60,7 @@ class LocalizacionOptima:
 
         # Agregar marcadores para las bodegas que tienen al menos un cliente asignado
         for bodega_id, coordenadas in dict_bodegas.items():
-            if bodega_id in (cliente['Bodega Asignada'] for cliente in self.resultados.values()) and bodega_id in [1, 2, 3] or True:
+            if bodega_id in (cliente['Bodega Asignada'] for cliente in self.resultados.values()):
                 num = bodega_id
                 if num == 10:
                     num = 'warehouse'
@@ -77,44 +77,43 @@ class LocalizacionOptima:
         dict_clientes = construccion_datos.dict_ventas
         for cliente_id, datos_cliente in self.resultados.items():
             # print(cliente_id, datos_cliente)
-            if datos_cliente['Bodega Asignada'] in [1, 2, 3] or True:
-                lat = dict_clientes[cliente_id]['LAT']
-                long = dict_clientes[cliente_id]['LON']
-                destino = [lat, long]
-                comuna = dict_clientes[cliente_id]['Comuna Despacho']
-                color = colores_bodega[datos_cliente['Bodega Asignada']]
-                folium.Circle(
-                    location=[lat, long],
-                    radius=1000,  # Radio del círculo en metros
-                    popup=f'Cliente {cliente_id}',
+            lat = dict_clientes[cliente_id]['LAT']
+            long = dict_clientes[cliente_id]['LON']
+            destino = [lat, long]
+            comuna = dict_clientes[cliente_id]['Comuna Despacho']
+            color = colores_bodega[datos_cliente['Bodega Asignada']]
+            folium.Circle(
+                location=[lat, long],
+                radius=1000,  # Radio del círculo en metros
+                popup=f'Cliente {cliente_id}',
+                color=color,
+                fill=True,
+                fill_color=color
+            ).add_to(m)
+            # Conectar el cliente con su bodega asignada con una línea coloreada
+            bodega_coords = dict_bodegas[datos_cliente['Bodega Asignada']]
+            origen = [bodega_coords['LAT'], bodega_coords['LONG']]
+            if self.d == construccion_datos.d_Manhattan or self.d == construccion_datos.d_Manhattan_2:
+                folium.PolyLine(    
+                    locations=[[(destino[0], origen[1]), (origen[0], origen[1])]],
                     color=color,
-                    fill=True,
-                    fill_color=color
+                    weight=2.5,
+                    opacity=1,
+                    popup=f'Cliente {cliente_id}'
                 ).add_to(m)
-                # Conectar el cliente con su bodega asignada con una línea coloreada
-                bodega_coords = dict_bodegas[datos_cliente['Bodega Asignada']]
-                origen = [bodega_coords['LAT'], bodega_coords['LONG']]
-                if self.d == construccion_datos.d_Manhattan:
-                    folium.PolyLine(    
-                        locations=[[(destino[0], origen[1]), (origen[0], origen[1])]],
-                        color=color,
-                        weight=2.5,
-                        opacity=1,
-                        popup=f'Cliente {cliente_id}'
-                    ).add_to(m)
 
-                    folium.PolyLine(
-                        locations=[[(destino[0], destino[1]), (destino[0], origen[1])]],
-                        color=color,
-                        weight=2.5,
-                        opacity=1,
-                        popup=f'Cliente {cliente_id}'
-                    ).add_to(m)
-        
-                elif self.d == construccion_datos.d_mapbox:
-                    route_coords = self.rutas[comuna][datos_cliente['Bodega Asignada']]
-                    formatted_coords = [(coord[1], coord[0]) for coord in route_coords] 
-                    folium.PolyLine(locations=formatted_coords, color=color, popup=f'Cliente {cliente_id}', weight = 2.5, opacity = 1).add_to(m)
+                folium.PolyLine(
+                    locations=[[(destino[0], destino[1]), (destino[0], origen[1])]],
+                    color=color,
+                    weight=2.5,
+                    opacity=1,
+                    popup=f'Cliente {cliente_id}'
+                ).add_to(m)
+    
+            elif self.d == construccion_datos.d_mapbox:
+                route_coords = self.rutas[comuna][datos_cliente['Bodega Asignada']]
+                formatted_coords = [(coord[1], coord[0]) for coord in route_coords] 
+                folium.PolyLine(locations=formatted_coords, color=color, popup=f'Cliente {cliente_id}', weight = 2.5, opacity = 1).add_to(m)
 
         # Guardar el mapa en un archivo HTML
         m.save(f'resultados/mapa_p_{self.p}_{self.tipo_distancia}.html')
@@ -192,7 +191,7 @@ class LocalizacionOptima:
 # for p in [3, 5, 10]:
 #     # LocalizacionOptima(p, construccion_datos.d_Manhattan).resolver()
 #     LocalizacionOptima(p, construccion_datos.d_mapbox).resolver()
-LocalizacionOptima(10, construccion_datos.d_Manhattan).resolver()
+LocalizacionOptima(3, construccion_datos.d_Manhattan_2).resolver()
 
 #TODO FALTA CORRER CASOS PARA DISTINTA CATEGORICACIÓN mapbox y v = 30 km/hr p=10, p= 5 y p= 3
 
