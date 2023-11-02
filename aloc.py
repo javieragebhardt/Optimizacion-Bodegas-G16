@@ -132,28 +132,17 @@ dict_resultados = dict()
 ventas = construccion_datos.dict_ventas
 for i in I:
     dict_resultados[i] = dict()
-    categoria = ventas[i]['Categoria'] 
-    if categoria == 'Premium':
-        tiempo_max = 12
-    elif categoria == 'Gold':
-        tiempo_max = 24
-    elif categoria == 'Silver':
-        tiempo_max = 48
-    for j in J:
-        for v in [45]:
-            # dict_resultados[i]['Tiempo'] = 0
-            # dict_resultados[i]['Bodega Asignada'] = 0
-            # dict_resultados[i]['Tiempo Categoría'] = tiempo_max
-            # dict_resultados[i][f'Cumple Mínimo v={v}'] = 0            
-            if D[i, j].x > 0:
-                dict_resultados[i]['Tiempo'] = D[i, j].x / v
-                dict_resultados[i]['Bodega Asignada'] = j
-                dict_resultados[i]['Tiempo Categoría'] = tiempo_max
-                dict_resultados[i][f'Cumple Mínimo v={v}'] = 0
-                if D[i, j].x / v <= tiempo_max:
-                    dict_resultados[i][f'Cumple Mínimo v={v}'] = 1
-
-
+    for j in J:           
+        if D[i, j].x > 0:
+            dict_resultados[i]['Bodega Asignada'] = j
+            dict_resultados[i]['Tiempo'] = D[i, j].x / 45
+            dict_resultados[i]['Cantidad'] = ventas[i]['Cantidad']
+            dict_resultados[i]['Comuna Despacho'] = ventas[i]['Comuna Despacho']
+            dict_resultados[i]['Categoria'] = ventas[i]['Categoria']
+            dict_resultados[i]['LAT'] = ventas[i]['LAT']
+            dict_resultados[i]['LON'] = ventas[i]['LON'] 
+            dict_resultados[i]['X'] = a[i][0]
+            dict_resultados[i]['Y'] = a[i][1] 
     
 dict_bodegas = construccion_datos.dict_bodegas
 colores_bodega = {1: "blue", 2: "red", 3: "green", 4: "darkblue", 5: "orange", 
@@ -223,5 +212,42 @@ for cliente_id, datos_cliente in dict_resultados.items():
             #     folium.PolyLine(locations=formatted_coords, color=color, popup=f'Cliente {cliente_id}', weight = 2.5, opacity = 1).add_to(m)
         else:
             print(f'cliente {cliente_id} no asignado')
+
+resultados = dict()
+ventas = construccion_datos.dict_ventas
+
+
+
+# for i in I:
+#     resultados[i] = dict()
+#     asignadoip = False
+#     asignadoipp = False
+#     if i in IP:
+#         asignadoip = True
+#     if i in IPP:
+#         asignadoipp = True 
+#     for j in J:
+#         ok = False
+#         if asignadoip:
+#             if c[i][j] > 0:
+#                 ok = True
+#         if asignadoipp:
+#             if z[i, j].x > 0:
+#                 ok = True
+#         if ok:
+#             resultados[i]['Bodega Asignada'] = j
+#             resultados[i]['Tiempo'] = D[i, j].x / 45
+#             resultados[i]['Cantidad'] = ventas[i]['Cantidad']
+#             resultados[i]['Comuna Despacho'] = ventas[i]['Comuna Despacho']
+#             resultados[i]['Categoria'] = ventas[i]['Categoria']
+#             resultados[i]['LAT'] = ventas[i]['LAT']
+#             resultados[i]['LON'] = ventas[i]['LON'] 
+#             resultados[i]['X'] = a[i][0]
+#             resultados[i]['Y'] = a[i][1] 
+
+df = pd.DataFrame.from_dict(dict_resultados, orient='index')
+df.to_excel('Datos_Aloc_3_bodegas.xlsx', index=True)
+
+
 
 m.save(f'resultados/mapa_p_3_localizacion_asignacion.html')
