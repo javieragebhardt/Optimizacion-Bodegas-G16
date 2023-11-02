@@ -1,0 +1,24 @@
+\ Model _copy
+\ LP format - for model browsing. Use MPS format to capture full model detail.
+Minimize
+ 
+Subject To
+ deltas_2[4,1]: - y[1] - delta_y_pos[4,1] + delta_y_neg[4,1]
+   = -6973.200157797331
+ deltas_2[1251,2]: - y[2] - delta_y_pos[1251,2] + delta_y_neg[1251,2]
+   = -5533.769708030335
+ nivel_servicio[4,1]: D[4,1] <= 540
+ R74242: y[1] - y[2] <= 0
+ relacion_z-D_IP[1251,2]: D[1251,2] <= 424.97
+ definición_de_D_IP[4,1]: D[4,1] - delta_x_pos[4,1] - delta_x_neg[4,1]
+   - delta_y_pos[4,1] - delta_y_neg[4,1] >= 0
+ definición_de_D_IP[1251,2]: D[1251,2] - delta_x_pos[1251,2]
+   - delta_x_neg[1251,2] - delta_y_pos[1251,2] - delta_y_neg[1251,2] >= 0
+Bounds
+ y[1] free
+ y[2] free
+ D[4,1] free
+ D[1251,2] free
+ delta_y_pos[4,1] free
+ delta_y_neg[1251,2] free
+End

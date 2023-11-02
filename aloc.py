@@ -13,34 +13,29 @@ import csv
 I = construccion_datos_aloc.I
 J = construccion_datos_aloc.J
 a = construccion_datos_aloc.a
-<<<<<<< HEAD
 N = construccion_datos_aloc.N
 localizaciones_iniciales = construccion_datos_aloc.localizaciones_iniciales
 M = construccion_datos_aloc.M
+ns = construccion_datos_aloc.ns
+IP = construccion_datos_aloc.ip
+IPP = construccion_datos_aloc.ipp
+c = construccion_datos_aloc.c
 
 print(f"Largos: {len(I)}, {len(J)}")
 
-=======
-M = construccion_datos_aloc.M
-localizaciones_iniciales = construccion_datos_aloc.localizaciones_iniciales
->>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
 # MODELO:
 
 m = Model()
 
 m.setParam('StartNodeLimit', 100000)
-<<<<<<< HEAD
 # m.Params.TimeLimit = 20
-=======
-m.Params.TimeLimit = 300
->>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
 
 # Variables
 x = m.addVars(J, vtype=GRB.CONTINUOUS, name="x") 
 y = m.addVars(J, vtype=GRB.CONTINUOUS, name="y")
-z = m.addVars(I, J, vtype=GRB.BINARY, name="z")
+z = m.addVars(IPP, J, vtype=GRB.BINARY, name="z")
 D = m.addVars(I, J, vtype=GRB.CONTINUOUS, name="D")
 delta_x_pos = m.addVars(I, J, name="delta_x_pos")
 delta_x_neg = m.addVars(I, J, name="delta_x_neg")
@@ -53,32 +48,26 @@ m.update()
 m.setObjective(quicksum(D[i, j] for i in I for j in J), GRB.MINIMIZE)
 
 # Restricciones
-m.addConstrs((quicksum(z[i, j] for j in J) == 1 for i in I), name="asignación clientes-bodega")
+m.addConstrs((quicksum(z[i, j] for j in J) == 1 for i in IPP), name="asignación clientes-bodega")
 
 # Modificar esta restricción para cada M
-<<<<<<< HEAD
-m.addConstrs((M[i]* z[i, j] >= D[i, j] for i in I for j in J), name='relacion z-D')
-=======
-m.addConstrs((M[i] * z[i, j] >= D[i, j] for i in I for j in J), name='relacion z-D')
->>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
+m.addConstrs((M[i]* z[i, j] >= D[i, j] for i in IPP for j in J), name='relacion z-D IPP')
 
 m.addConstrs((a[i][0] - x[j] == delta_x_pos[i, j] - delta_x_neg[i, j] for i in I for j in J), name='deltas 1')
 
 m.addConstrs((a[i][1] - y[j] == delta_y_pos[i, j] - delta_y_neg[i, j] for i in I for j in J), name='deltas 2')
 
-<<<<<<< HEAD
-m.addConstrs((D[i, j] >= delta_x_pos[i, j] + delta_x_neg[i, j] + delta_y_pos[i, j] + delta_y_neg[i, j] - N[i] * (1 - z[i, j]) for i in I for j in J), name='definición de D')
-=======
-m.addConstrs((D[i, j] >= delta_x_pos[i, j] + delta_x_neg[i, j] + delta_y_pos[i, j] + delta_y_neg[i, j] - M[i] * (1 - z[i, j]) for i in I for j in J), name='definición de D')
->>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
+m.addConstrs((D[i, j] >= delta_x_pos[i, j] + delta_x_neg[i, j] + delta_y_pos[i, j] + delta_y_neg[i, j] - N[i] * (1 - z[i, j]) for i in IPP for j in J), name='definición de D')
 
 m.addConstrs((delta_x_pos[i, j] >= 0 for i in I for j in J), name='delta x positivo')
 m.addConstrs((delta_x_neg[i, j] >= 0 for i in I for j in J), name='delta x negativo')
 m.addConstrs((delta_y_pos[i, j] >= 0 for i in I for j in J), name='delta y positivo')
 m.addConstrs((delta_y_neg[i, j] >= 0 for i in I for j in J), name='delta y negativo')
+m.addConstrs((D[i, j] <= ns[i] for i in I for j in J), name='nivel servicio')
 m.addConstrs(y[j] <= y[j+1] for j in J[:-1])
+m.addConstrs((M[i] * c[i][j] >= D[i, j] for i in IP for j in J), name='relacion z-D IP')
+m.addConstrs((D[i, j] >= delta_x_pos[i, j] + delta_x_neg[i, j] + delta_y_pos[i, j] + delta_y_neg[i, j] - N[i] * (1 - c[i][j]) for i in IP for j in J), name='definición de D IP')
 
-<<<<<<< HEAD
 #Solucion inicial entregada
 for j, [x_val, y_val] in localizaciones_iniciales.items():
     # if j <= construccion_datos_aloc.p:
@@ -100,26 +89,17 @@ for i in I:
 
 print(f"Objetivo: {objective_value}")
 
-=======
-for j, [x_val, y_val] in localizaciones_iniciales.items():
-    if j <= construccion_datos_aloc.p:
-        x[j].start = x_val
-        y[j].start = y_val
->>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 
 # Optimiza el modelo
 m.optimize()
 
 
-<<<<<<< HEAD
-# Para ver cuales son las restricciones infactibles
-#m.computeIIS()
+# # Para ver cuales son las restricciones infactibles
+# m.computeIIS()
 
-#m.write("model.ilp")
+# m.write("model.ilp")
 
 
-=======
->>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
 # Solución:
 for j in J:
     print(j, x[j].x, y[j].x)
@@ -137,7 +117,6 @@ for j in J:
 print(f'Valor objetivo: {m.objVal}')
 
 
-<<<<<<< HEAD
 #guardar bodegas
 localizacion_bodegas = dict()
 for j in J:
@@ -246,8 +225,3 @@ for cliente_id, datos_cliente in dict_resultados.items():
             print(f'cliente {cliente_id} no asignado')
 
 m.save(f'resultados/mapa_p_3_localizacion_asignacion.html')
-=======
-
-
-
->>>>>>> bd623df1c299893712fbabad8cf75cb8ab2977a8
