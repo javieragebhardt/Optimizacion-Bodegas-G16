@@ -3,10 +3,8 @@ import pandas as pd
 import numpy as np
 from gurobipy import Model, GRB, quicksum
 import construccion_datos_aloc
-import construccion_datos
 import matplotlib.pyplot as plt
-import json
-import csv
+
 
 # CONSTRUCCIÓN DE DATOS:
 
@@ -121,7 +119,7 @@ print(f'Valor objetivo: {m.objVal}')
 localizacion_bodegas = dict()
 for j in J:
     localizacion_bodegas[j] = dict()
-    xy = construccion_datos.calcular_xy_coordenadas_2(x[j].x, y[j].x)
+    xy = construccion_datos_aloc.calcular_xy_coordenadas_2(x[j].x, y[j].x)
     print(f'Bodega {j}:  LON: {xy[0]}, LAT: {xy[1]}')
     localizacion_bodegas[j]['LON'] = xy[0]
     localizacion_bodegas[j]['LAT'] = xy[1]
@@ -129,7 +127,7 @@ for j in J:
 
 dict_resultados = dict()
 
-ventas = construccion_datos.dict_ventas
+ventas = construccion_datos_aloc.dict_ventas
 for i in I:
     dict_resultados[i] = dict()
     for j in J:           
@@ -144,7 +142,7 @@ for i in I:
             dict_resultados[i]['X'] = a[i][0]
             dict_resultados[i]['Y'] = a[i][1] 
     
-dict_bodegas = construccion_datos.dict_bodegas
+dict_bodegas = construccion_datos_aloc.dict_bodegas
 colores_bodega = {1: "blue", 2: "red", 3: "green", 4: "darkblue", 5: "orange", 
                     6: "purple", 7: "gray", 8: "cadetblue", 9: "black", 
                     10: "darkgreen"}
@@ -168,7 +166,7 @@ for bodega_id, coordenadas in localizacion_bodegas.items():
         ).add_to(m)
 
 # Agregar círculos para los clientes en el mapa con colores de bodega
-dict_clientes = construccion_datos.dict_ventas
+dict_clientes = construccion_datos_aloc.dict_ventas
 for cliente_id, datos_cliente in dict_resultados.items():
     if datos_cliente:
         if datos_cliente['Bodega Asignada'] == 0:
@@ -206,48 +204,10 @@ for cliente_id, datos_cliente in dict_resultados.items():
                 popup=f'Cliente {cliente_id}'
             ).add_to(m)
 
-            # elif self.d == construccion_datos.d_mapbox:
-            #     route_coords = self.rutas[comuna][datos_cliente['Bodega Asignada']]
-            #     formatted_coords = [(coord[1], coord[0]) for coord in route_coords] 
-            #     folium.PolyLine(locations=formatted_coords, color=color, popup=f'Cliente {cliente_id}', weight = 2.5, opacity = 1).add_to(m)
         else:
             print(f'cliente {cliente_id} no asignado')
 
-resultados = dict()
-ventas = construccion_datos.dict_ventas
-
-
-
-# for i in I:
-#     resultados[i] = dict()
-#     asignadoip = False
-#     asignadoipp = False
-#     if i in IP:
-#         asignadoip = True
-#     if i in IPP:
-#         asignadoipp = True 
-#     for j in J:
-#         ok = False
-#         if asignadoip:
-#             if c[i][j] > 0:
-#                 ok = True
-#         if asignadoipp:
-#             if z[i, j].x > 0:
-#                 ok = True
-#         if ok:
-#             resultados[i]['Bodega Asignada'] = j
-#             resultados[i]['Tiempo'] = D[i, j].x / 45
-#             resultados[i]['Cantidad'] = ventas[i]['Cantidad']
-#             resultados[i]['Comuna Despacho'] = ventas[i]['Comuna Despacho']
-#             resultados[i]['Categoria'] = ventas[i]['Categoria']
-#             resultados[i]['LAT'] = ventas[i]['LAT']
-#             resultados[i]['LON'] = ventas[i]['LON'] 
-#             resultados[i]['X'] = a[i][0]
-#             resultados[i]['Y'] = a[i][1] 
-
 df = pd.DataFrame.from_dict(dict_resultados, orient='index')
 df.to_excel('Datos_Aloc_3_bodegas.xlsx', index=True)
-
-
 
 m.save(f'resultados/mapa_p_3_localizacion_asignacion.html')

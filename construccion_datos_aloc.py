@@ -69,12 +69,6 @@ def calcular_xy_coordenadas_2(x, y):
     lon, lat = transformer.transform(x, y)
     return [lon, lat]
 
-
-def calcular_coordenadas_LL(x, y): 
-    longitud = math.degrees(- x / radio_tierra)
-    latitud = math.degrees(2 * math.atan(math.exp(math.radians(- y / radio_tierra))) - math.pi / 2) 
-    return latitud, longitud
-
 # Cargar el archivo JSON como un diccionario
 with open('d_manhattan_2.json', 'r') as archivo_json:
     d_Manhattan_2 = json.load(archivo_json)
