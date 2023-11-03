@@ -7,13 +7,11 @@ import pyproj
 # Importación base de datos
 bdd_categoria = "BDD_Bodegas_Categorizada.xlsx"
 bdd_ventas = pd.read_excel(bdd_categoria)
-bdd_proyeccion = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=1)
 bdd_bodegas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=2)
 bdd_comunas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=3)
 
 # Pasamos la columna de fechas a formato de fechas
 bdd_ventas['Fecha'] = pd.to_datetime(bdd_ventas['Fecha'])
-bdd_proyeccion['Fecha'] =pd.to_datetime(bdd_proyeccion['Fecha'])
 
 # Agrupación de ventas por cliente y completar comuna
 bdd_ventas_agrupadas = bdd_ventas.groupby("ID Cliente").agg({"Cantidad": "sum", "Comuna Despacho": "first", 'ID Bodega Despacho': 'first', 'Categoria': 'first'}).reset_index()
@@ -49,14 +47,6 @@ for i in dict_ventas.keys():
         elif round((lat_diff + lon_diff)/1000, 2) == 0:
             d_Manhattan[i][j] = 0.01
 
-
-# Definir coordenadas en x e y de clientes
-def calcular_coordenadas_xy(lat, lon):
-    x = - radio_tierra * math.radians(lon)/1000
-    y = - radio_tierra * math.log(math.tan(math.pi / 4 + math.radians(lat) / 2))/1000
-    return [x, y]
-
-
 def calcular_coordenadas_xy_2(lat, lon):
     transformer =  pyproj.Transformer.from_crs("epsg:20040", "epsg:20049", always_xy=True)
     x, y = transformer.transform(lon, lat)
@@ -70,7 +60,7 @@ def calcular_xy_coordenadas_2(x, y):
     return [lon, lat]
 
 # Cargar el archivo JSON como un diccionario
-with open('d_manhattan_2.json', 'r') as archivo_json:
+with open('d_manhattan.json', 'r') as archivo_json:
     d_Manhattan_2 = json.load(archivo_json)
 
 d_Manhattan_2 = {int(k1): {int(k2): v2 for k2, v2 in v1.items()} for k1, v1 in d_Manhattan_2.items()}
@@ -131,8 +121,6 @@ for i in dict_ventas.keys():
     M[i] = min_distance + (min_distance*error_2) #Acá podríamos darle un margen 1% del maximo este caso
     # No se si quieren redondear tmb round(max_distance + max_distance*0.01, 2)
 
-
-
 ######## definición de I
 I = list(dict_ventas.keys())
 
@@ -146,7 +134,6 @@ J = range(1, p + 1)
 localizaciones_iniciales = dict()
 for i in [9, 4, 1]:
     localizaciones_iniciales[i] = calcular_coordenadas_xy_2(dict_bodegas[i]['LAT'], dict_bodegas[i]['LONG'])
-    print(localizaciones_iniciales[i])
 
 
 ns = dict()

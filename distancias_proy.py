@@ -4,23 +4,19 @@ import numpy as np
 import math
 import json
 import pyproj
-
 # Importación base de datos
 bdd_categoria = "BDD_Bodegas_Categorizada.xlsx"
 bdd_ventas = pd.read_excel(bdd_categoria)
-bdd_proyeccion = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=1)
 bdd_bodegas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=2)
 bdd_comunas = pd.read_excel("BDD_Bodegas.xlsx", sheet_name=3)
 
 # Pasamos la columna de fechas a formato de fechas
 bdd_ventas['Fecha'] = pd.to_datetime(bdd_ventas['Fecha'])
-bdd_proyeccion['Fecha'] =pd.to_datetime(bdd_proyeccion['Fecha'])
 
 # Agrupación de ventas por cliente y completar comuna
 bdd_ventas_agrupadas = bdd_ventas.groupby("ID Cliente").agg({"Cantidad": "sum", "Comuna Despacho": "first", 'ID Bodega Despacho': 'first', 'Categoria': 'first'}).reset_index()
 bdd_ventas_agrupadas = bdd_ventas_agrupadas.merge(bdd_comunas, left_on='Comuna Despacho', right_on='Comuna')
 bdd_ventas_agrupadas = bdd_ventas_agrupadas[bdd_ventas_agrupadas["Cantidad"] != 0] #TODO revisar
-
 
 # Armamos los diccionarios
 dict_bodegas = bdd_bodegas.set_index('ID Bodega')[['LAT', 'LONG']].to_dict(orient='index') 
@@ -28,15 +24,16 @@ dict_ventas = bdd_ventas_agrupadas.set_index('ID Cliente')[['Cantidad', 'Comuna 
 
 
 def calcular_coordenadas_xy_2(lat, lon):
-    # if -lon >= 72:
-    #     epsg_chile = 20048
-    #     utm = pyproj.Proj("+proj=utm +zone=18 +south +ellps=WGS84")
-    # else:
-    #     epsg_chile = 20049
-    #     
     transformer =  pyproj.Transformer.from_crs("epsg:20040", "epsg:20049", always_xy=True)
     x, y = transformer.transform(lon, lat)
-    return [- x/1000, - y/1000]
+    return [x/1000, y/1000]
+
+def calcular_xy_coordenadas_2(x, y):
+    x = x * 1000
+    y = y * 1000
+    transformer =  pyproj.Transformer.from_crs("epsg:20049", "epsg:20040", always_xy=True)
+    lon, lat = transformer.transform(x, y)
+    return [lon, lat]
 
 d_Manhattan_2 = dict()
 for i in dict_ventas.keys():
