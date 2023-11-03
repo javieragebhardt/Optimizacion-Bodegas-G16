@@ -12,6 +12,7 @@ Repositorio correspondiente a los archivos de programación y datos utilizados p
 - `BDD_Categorizacion_0.15_0.7.xlsx`: Base de datos tercera categorización (15% Silver, 55 % Gold y 30 % Premium).
 - `construccion_datos.py`:  archivo que importa y ordena datos entregados del problema.
 - `construccion_datos_proy.py`:  archivo que importa y ordena datos entregados del problema para la proyección a 10 años.
+- `Analisis_Datos_Bodegas.ipynb`: Archivo de análisis de situación inicial que permitió analizar y realizar una categorización mediante el Prinicipo de Paretto.
 
 **Levantamiento de resultados, gráficos y mapas**
 
@@ -24,7 +25,8 @@ Repositorio correspondiente a los archivos de programación y datos utilizados p
 - ``d_manhattan.json``: archivo .json que contiene las distancias manhattan entre cada cliente histórico con cada bodega usando la proyección de coordenadas de Chile.
 - ``d_manhattan_proy.json``: archivo .json que contiene las distancias manhattan entre cada cliente de la proyección a 10 años con cada bodega usando la proyección de coordenadas de Chile.
 - ``Comparacion distancias.ipynb``: genera un histograma comparando las distancias obtenidas usando mapbox y manhattan. 
-- ``Heurística.ipynb``: construcción de la heurística de consolidación de carga. 
+- ``Heurística.ipynb``: construcción de la heurística de consolidación de carga.
+- ``Tamano_Bodegas.ipynb``: archivo que calcula el tamaño de las bodegas teniendo en cuenta la carga de las bodegas y los costos de almacenamiento y transporte.
 
 **Manejo de Resultados**
 
