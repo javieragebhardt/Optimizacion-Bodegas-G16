@@ -37,7 +37,7 @@ class ConstruccionDatos:
         # Parametros
         self.I = list(self.dict_ventas.keys())
         if modelo == 'aloc':
-            self.J = range(1, 4)
+            self.J = [8, 4, 1]
         else:
             self.J = list(self.dict_bodegas.keys())
         self.h = self.bdd_ventas_agrupadas.set_index('ID Cliente')['Cantidad'].to_dict()
@@ -97,7 +97,7 @@ class ConstruccionDatos:
 
     def generar_m(self):
         # Diccionario M para almacenar las distancias máximas
-        error_2 = 16
+        error_2 = 13
         self.M = {}
 
         # Bucle para cada cliente
@@ -156,7 +156,7 @@ class ConstruccionDatos:
         self.c = dict()
 
         # Latitudes bodegas LAP 20% GAP
-        if self.proy:
+        if self.proy or True:
             n1 = 27.034
             n2 = 31.62
             c1 = 35.316
@@ -179,12 +179,12 @@ class ConstruccionDatos:
             lat = self.dict_ventas[cliente]['LAT']
             if lat > prom_lat_norte - 1: 
                 self.ip.append(cliente)
-                self.c[cliente] = {1:0 , 2:0, 3:1}
-            elif lat < prom_lat_sur + 1:
+                self.c[cliente] = {8:0 , 4:0, 1:1}
+            elif lat < prom_lat_sur + 2:
                 self.ip.append(cliente)
-                self.c[cliente] = {1:1 , 2:0, 3:0}
-            elif lat < (prom_lat_centro + 0.25*(c1 - c2)) and lat > (prom_lat_centro - 0.25*(c1 - c2)):
+                self.c[cliente] = {8:1 , 4:0, 1:0}
+            elif lat < (prom_lat_centro + 0.35*(c1 - c2)) and lat > (prom_lat_centro - 0.35*(c1 - c2)):
                 self.ip.append(cliente)
-                self.c[cliente] = {1:0 , 2:1, 3:0}
+                self.c[cliente] = {8:0 , 4:1, 1:0}
             else:
                 self.ipp.append(cliente)

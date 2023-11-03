@@ -17,17 +17,20 @@ Repositorio correspondiente a los archivos de programación y datos utilizados p
 
 - ``caso_base.py``: contiene la clase CasoBase que genera mapa y un dataframe con la asignacion inicial sin cambios.
 - ``distancias_mapbox.py``: trabajo de distancias reales comuna-bodega (con mapbox). Crea el archivo ``rutas.json`` (contiene las rutas arrojadas).
+- ``distancias_proy.py``: genera la matriz de distancia cliente bodega para los datos históricos y la proyección de 10 años usando la proyección de coordenadas de Chile, lo guarda en los archivos .json.
 - `distancias_comunas_bodegas_mapboc.xlsx`: Distancias mapbox entre las distintas comunas y bodegas. 
-- ``modelo_p_median.py``: contiene la clase LocalizacionOptima que mediante Gurobi optimiza la asignación cliente-bodega (p-median), además de generar datframes con resultados y mapas visuales de la asignación.
-- ``modelo_p_median.py``: contiene la clase LocalizacionOptima que mediante Gurobi optimiza la asignación cliente-bodega (p-median), además de generar datframes con resultados y mapas visuales de la asignación para la proyección a 10 años.
-- ``modelo_asignacion_localizacion.py``: contiene el código que mediante Gurobi optimiza la asignación de localizaciones de bodega usando distancia manhattan. Además, crea mapas visuales de la asignación.
 - ``rutas.json``: archivo .json que contiene las coordenadas de las rutas generadas usando mapbox que sirven para gráficar.
 - ``valores_y.json``: archivo .json que contiene la asignación de bodega cliente del p-median para poder darsela a gurobi como solución inicial para resolver más rápidamente el problema de asignación de localizaciones.
+- ``d_manhattan.json``: archivo .json que contiene las distancias manhattan entre cada cliente histórico con cada bodega usando la proyección de coordenadas de Chile.
+- ``d_manhattan_proy.json``: archivo .json que contiene las distancias manhattan entre cada cliente de la proyección a 10 años con cada bodega usando la proyección de coordenadas de Chile.
+- ``Comparacion distancias.ipynb``: genera un histograma comparando las distancias obtenidas usando mapbox y manhattan. 
+- ``Heurística.ipynb``: construcción de la heurística de consolidación de carga. 
 
 **Manejo de Resultados**
 
 - ``generar_grafico_acumulado.py``: genera gráficos de despachos acumulados según las horas de despacho. Los resultados para los casos analizados se encuentran en la carpeta *graficos* con el nombre "acum_{característica}.png", siendo característica: caso base o el valor de p.
 - ``Demanda asignada a bodegas optimas.ipynb``: genera gráficos de demanda para cada año, promedio y para la proyección. Estos resultados son para el caso de 3 bodegas, donde se mantiene el cumplimiento del nivel de servicio de todas las categorizaciones.
+- ``calcular_movimiento_bodegas.py``: calcula la distancia manhattan en que se mueven las bodegas actuales y las obtenidas con el código del ALOC.
   
 **Carpeta Resultados**
 
@@ -39,6 +42,8 @@ Cada carpeta contiene y la última que corresponde a los resultados si es que se
 - ``tiempos_p_{valor p}_{distancia}.xlsx``: base de datos que contiene los resultados arrojados al resolver el problema mediante p-median. Las filas representan a cada cliente y las columnas: id, tiempo de entrega, bodega asignada, categoría perteneciente (en horas) y si cumple o no el nivel de servicio (si cumple toma el valor de 1, de contrario valor 0).
 - ``valoresFO.txt``: valores que toma la función objetivo establecida para los distintos parámetros y datos.
 - (para la primera categorización solamente): los mismos archivos anteriores pero para el caso base.
+
+Además, hay una carpeta con los archivos nuevos para la entrega del pre-informe, con la asignación del p-median y el ALOC. 
 
 **Carpeta Gráficos**
 

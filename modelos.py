@@ -100,7 +100,7 @@ class Modelos:
         self.m.addConstrs((self.delta_y_pos[i, j] >= 0 for i in self.I for j in self.J), name='delta y positivo')
         self.m.addConstrs((self.delta_y_neg[i, j] >= 0 for i in self.I for j in self.J), name='delta y negativo')
         self.m.addConstrs((self.D[i, j] <= self.ns[i] for i in self.I for j in self.J), name='nivel servicio')
-        self.m.addConstrs(self.y[j] <= self.y[j+1] for j in self.J[:-1])
+        # self.m.addConstrs(self.y[j] <= self.y[j+1] for j in self.J[:-1])
         self.m.addConstrs((self.M[i] * self.c[i][j] >= self.D[i, j] for i in self.IP for j in self.J), name='relacion z-D IP')
         self.m.addConstrs((self.D[i, j] >= self.delta_x_pos[i, j] + self.delta_x_neg[i, j] + self.delta_y_pos[i, j] + self.delta_y_neg[i, j] - self.N[i] * (1 - self.c[i][j]) for i in self.IP for j in self.J), name='definición de D IP')
         self.m.optimize()
@@ -189,4 +189,5 @@ class Modelos:
         m.save(nombre_archivo) 
 
 # Modelos('pmedian', 'manhattan', proy=True)
-Modelos('aloc', 'manhattan', proy=True)      
+Modelos('pmedian', 'manhattan', proy=False) 
+Modelos('pmedian', 'manhattan', proy=True)     
