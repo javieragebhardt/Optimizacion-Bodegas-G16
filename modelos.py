@@ -1,3 +1,4 @@
+from matplotlib import pyplot as plt
 import pandas as pd
 from gurobipy import Model, GRB, quicksum
 import construccion_datos
@@ -23,10 +24,23 @@ class Modelos:
         self.datos = datos
         self.resultados = dict()
         self.modelo = modelo
+        self.obj_vals = []
+        self.runtimes = []
+        self.gaps = []
         if self.modelo == 'pmedian':
             self.pmedian()
         elif self.modelo == 'aloc':
             self.aloc()
+
+    def mycallback(self, model, where):
+        if where == GRB.Callback.MIP:
+            objbnd = model.cbGet(GRB.Callback.MIP_OBJBND)
+            objbst = model.cbGet(GRB.Callback.MIP_OBJBST)
+            runtime = model.cbGet(GRB.Callback.RUNTIME)
+            gap = abs(objbst - objbnd) / abs(objbst)
+            self.obj_vals.append(objbnd)
+            self.runtimes.append(runtime)
+            self.gaps.append(gap)
 
     def pmedian(self):
         # Modelo
@@ -41,7 +55,7 @@ class Modelos:
         self.m.addConstrs((self.y.sum(i, '*') == 1 for i in self.I), name = "asignación_demanda")
         self.m.addConstrs((self.y[i, j] <= self.x[j] for i in self.I for j in self.J), name = "límite_asignación")
         self.m.addConstr(self.x.sum() == self.p, name = "número_bodegas")
-        self.m.optimize()
+        self.m.optimize(self.mycallback)
         self.resultados_pmedian()
     
     def resultados_pmedian(self):
@@ -71,7 +85,8 @@ class Modelos:
             nombre_archivo = f'resultados/datos_{self.modelo}_p_{self.p}_{self.tipo_distancia}.xlsx'
         df = pd.DataFrame.from_dict(self.resultados, orient='index')
         df.to_excel(nombre_archivo, index=True)
-        self.generar_mapa() 
+        self.generar_mapa()
+        self.graficar()  
 
     def aloc(self):
         self.m = Model()
@@ -103,7 +118,7 @@ class Modelos:
         # self.m.addConstrs(self.y[j] <= self.y[j+1] for j in self.J[:-1])
         self.m.addConstrs((self.M[i] * self.c[i][j] >= self.D[i, j] for i in self.IP for j in self.J), name='relacion z-D IP')
         self.m.addConstrs((self.D[i, j] >= self.delta_x_pos[i, j] + self.delta_x_neg[i, j] + self.delta_y_pos[i, j] + self.delta_y_neg[i, j] - self.N[i] * (1 - self.c[i][j]) for i in self.IP for j in self.J), name='definición de D IP')
-        self.m.optimize()
+        self.m.optimize(lambda model, where: self.mycallback(model, where))
         self.resultados_aloc()
 
     def resultados_aloc(self):
@@ -134,7 +149,8 @@ class Modelos:
             nombre_archivo = f'resultados/datos_{self.modelo}_p_{self.p}_{self.tipo_distancia}.xlsx'
         df = pd.DataFrame.from_dict(self.resultados, orient='index')
         df.to_excel(nombre_archivo, index=True)
-        self.generar_mapa() 
+        self.generar_mapa()
+        self.graficar() 
 
     def generar_mapa(self):
         
@@ -188,6 +204,27 @@ class Modelos:
             nombre_archivo = f'resultados/mapa_{self.modelo}_p_{self.p}_{self.tipo_distancia}.html'
         m.save(nombre_archivo) 
 
+    def graficar(self):
+        # Graficar
+        plt.figure(figsize=(15, 5))
+
+        # Gráfico de Valores Objetivos
+        plt.subplot(1, 2, 1)
+        plt.plot(self.runtimes, self.obj_vals, '-o')
+        plt.title('Valor Objetivo vs. Tiempo')
+        plt.xlabel('Tiempo (s)')
+        plt.ylabel('Valor Objetivo')
+
+        # Gráfico de Gaps
+        plt.subplot(1, 2, 2)
+        plt.plot(self.runtimes, self.gaps, '-o', color='red')
+        plt.title('Gap vs. Tiempo')
+        plt.xlabel('Tiempo (s)')
+        plt.ylabel('Gap (%)')
+
+        plt.tight_layout()
+        plt.show()
+
 # Modelos('pmedian', 'manhattan', proy=True)
-Modelos('pmedian', 'manhattan', proy=False) 
-Modelos('pmedian', 'manhattan', proy=True)     
+Modelos('aloc', 'manhattan', proy=False) 
+Modelos('aloc', 'manhattan', proy=True)     
