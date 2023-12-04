@@ -27,12 +27,18 @@ Repositorio correspondiente a los archivos de programación y datos utilizados p
 - ``Comparacion distancias.ipynb``: genera un histograma comparando las distancias obtenidas usando mapbox y manhattan. 
 - ``Heurística.ipynb``: construcción de la heurística de consolidación de carga.
 - ``Tamano_Bodegas.ipynb``: archivo que calcula el tamaño de las bodegas teniendo en cuenta la carga de las bodegas y los costos de almacenamiento y transporte.
+- ``Análisis de demanda.ipynb``: archivo que realiza un análisis de las demandas actuales de las bodegas y las demandas de la proyección, ajustandolas a la mejor distribución.
+- ``Analisis_Datos_Bodega.ipynb``: archivo que calcula datos de las bodegas como cantidad de clientes, cantidad de demanda, costos, etc.
+- ``generar_demanda.py``: archivo que genera 1 año de demandas para cada bodega en base a las distribuciones que ajustamos.
 
 **Manejo de Resultados**
 
 - ``generar_grafico_acumulado.py``: genera gráficos de despachos acumulados según las horas de despacho. Los resultados para los casos analizados se encuentran en la carpeta *graficos* con el nombre "acum_{característica}.png", siendo característica: caso base o el valor de p.
 - ``Demanda asignada a bodegas optimas.ipynb``: genera gráficos de demanda para cada año, promedio y para la proyección. Estos resultados son para el caso de 3 bodegas, donde se mantiene el cumplimiento del nivel de servicio de todas las categorizaciones.
 - ``calcular_movimiento_bodegas.py``: calcula la distancia manhattan en que se mueven las bodegas actuales y las obtenidas con el código del ALOC.
+- ``Caluclar Costos de Tamaño {Modelo}.ipynb``: Tal como dice el nombre, calcula los costos de tamaño según cada modelo (Caso Base, LAP y P-Median).
+- ``Consideraciones costos por distancia.ipynb``: Archivo qeu realiza el cálculo de ahorros para recomendaciones finales.
+- ``Simulación Costos.ipynb``: Archivo que a partir de las simulaciones, calcula los costos y gráficos utilizados para dar soporte a nuestra recomendación.
   
 **Carpeta Resultados**
 
@@ -46,6 +52,11 @@ Cada carpeta contiene y la última que corresponde a los resultados si es que se
 - (para la primera categorización solamente): los mismos archivos anteriores pero para el caso base.
 
 Además, hay una carpeta con los archivos nuevos para la entrega del pre-informe, con la asignación del p-median y el ALOC. 
+
+Asimismo, hay una carpeta llamada Simulación, con los resultados de dos simulaciones.
+
+**Carpeta Heurística Consolidación**
+Esta carptea incluye archivos utilizados para la construcción de la Heurística de Consolidación
 
 **Carpeta Gráficos**
 
