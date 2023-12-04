@@ -55,9 +55,6 @@ Además, hay una carpeta con los archivos nuevos para la entrega del pre-informe
 
 Asimismo, hay una carpeta llamada Simulación, con los resultados de dos simulaciones.
 
-**Carpeta Heurística Consolidación**
-Esta carptea incluye archivos utilizados para la construcción de la Heurística de Consolidación
-
 **Carpeta Gráficos**
 
 Carpeta que contiene algunos gráficos utilizados en las presentaciones.
