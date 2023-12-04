@@ -1,0 +1,6 @@
+manhattan_caso_base = 0
+manhattan_caso_base = 2807499.270000041
+manhattan_caso_base = 2807499.270000041
+manhattan_caso_base = 465041.48999999644
+mapbox_caso_base = 485819.42952900706
+mapbox_caso_base = 2769942.5413080174

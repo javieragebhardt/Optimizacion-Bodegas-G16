@@ -20,7 +20,7 @@ class Modelos:
         self.IP = datos.ip
         self.IPP = datos.ipp
         self.c = datos.c
-        self.p = 3
+        self.p = 10
         self.datos = datos
         self.resultados = dict()
         self.modelo = modelo
@@ -55,7 +55,7 @@ class Modelos:
         self.m.addConstrs((self.y.sum(i, '*') == 1 for i in self.I), name = "asignación_demanda")
         self.m.addConstrs((self.y[i, j] <= self.x[j] for i in self.I for j in self.J), name = "límite_asignación")
         self.m.addConstr(self.x.sum() == self.p, name = "número_bodegas")
-        self.m.optimize(self.mycallback)
+        self.m.optimize(lambda model, where: self.mycallback(model, where))
         self.resultados_pmedian()
     
     def resultados_pmedian(self):
@@ -132,8 +132,15 @@ class Modelos:
         ventas = self.datos.dict_ventas
         for i in self.I:
             self.resultados[i] = dict()
-            for j in self.J:           
-                if self.D[i, j].x > 0:
+            for j in self.J:
+                guardar = False
+                if i in self.IPP: 
+                    if self.z[i, j].x > 0:
+                        guardar = True          
+                else:
+                    if self.c[i][j] == 1:
+                        guardar = True
+                if guardar:
                     self.resultados[i]['Bodega Asignada'] = j
                     self.resultados[i]['Tiempo'] = self.D[i, j].x / 45
                     self.resultados[i]['Cantidad'] = ventas[i]['Cantidad']
@@ -226,5 +233,5 @@ class Modelos:
         plt.show()
 
 # Modelos('pmedian', 'manhattan', proy=True)
-Modelos('aloc', 'manhattan', proy=False) 
-Modelos('aloc', 'manhattan', proy=True)     
+Modelos('pmedian', 'manhattan', proy=False) 
+# Modelos('aloc', 'manhattan', proy=True)     
